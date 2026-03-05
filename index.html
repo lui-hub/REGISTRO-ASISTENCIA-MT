@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>I.E.P. Mis Talentos - Sistema 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="stats-dashboard">
+            <div class="stat-card"> 
+                <span class="stat-val" id="count-total">0</span> 
+                <span class="stat-label">Alumnos</span> 
+            </div>
+            <div class="stat-card p"> 
+                <span class="stat-val" id="count-p">0</span> 
+                <span class="stat-label">Pres.</span> 
+            </div>
+            <div class="stat-card t"> 
+                <span class="stat-val" id="count-t">0</span> 
+                <span class="stat-label">Tard.</span> 
+            </div>
+            <div class="stat-card a"> 
+                <span class="stat-val" id="count-a">0</span> 
+                <span class="stat-label">Faltas</span> 
+            </div>
+            <div class="stat-card j"> 
+                <span class="stat-val" id="count-j">0</span> 
+                <span class="stat-label">Just.</span> 
+            </div>
+        </div>
+
+        <header class="main-header">
+            <div class="header-brand">
+                <img src="INSIGNIA.jpg" alt="Logo" class="logo-img">
+                <div class="brand-text">
+                    <h1>Mis Talentos</h1>
+                    <span>Registro Oficial 2026</span>
+                </div>
+            </div>
+            <div id="reloj"><i class="far fa-clock"></i> 00:00:00</div>
+        </header>
+
+        <section class="control-panel">
+            <div class="filter-row">
+                <div class="input-group">
+                    <select id="selectNivel" onchange="actualizarGrados()">
+                        <option value="">Nivel</option>
+                        <option value="INICIAL">INICIAL</option>
+                        <option value="PRIMARIA">PRIMARIA</option>
+                        <option value="SECUNDARIA">SECUNDARIA</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <select id="selectGrado" onchange="cargarTablaAsistencia()">
+                        <option value="">Grado</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="date" id="fechaAsistencia" onchange="cargarTablaAsistencia()">
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button onclick="guardarAsistencia()" class="btn btn-save"><i class="fas fa-save"></i> Guardar</button>
+                <button onclick="marcarTodosPresentes()" class="btn btn-fast"><i class="fas fa-check-double"></i> Todo P</button>
+                <button onclick="exportarCSV()" class="btn btn-export"><i class="fas fa-file-excel"></i> Diario</button>
+                <button onclick="exportarReporteMensual()" class="btn btn-monthly"><i class="fas fa-calendar-alt"></i> Reporte Mes</button>
+                <button onclick="abrirModalAlumnos()" class="btn btn-config"><i class="fas fa-users-cog"></i> Alumnos</button>
+            </div>
+        </section>
+
+        <div class="info-resumen-grado">
+            <span id="infoTutorCabecera"><i class="fas fa-chalkboard-teacher"></i> Tutor no asignado</span>
+            <span class="badge-estudiantes"> Estudiantes: <b id="txt-conteo-alumnos">0</b></span>
+        </div>
+
+        <main class="content-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="40">Nº</th>
+                            <th>Estudiante</th>
+                            <th class="text-center">Asistencia y Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaEstudiantes">
+                        </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalEstudiantes" class="modal">
+        <div class="admin-premium">
+            <div class="modal-header-pro">
+                <div class="header-main-info">
+                    <i class="fas fa-users-cog fa-2x" style="color: #E31B2B;"></i>
+                    <div>
+                        <h2>Panel de Gestión</h2>
+                        <span id="infoGradoActual">Seleccione grado</span>
+                    </div>
+                </div>
+                <button class="btn-close-x" onclick="cerrarModalAlumnos()">&times;</button>
+            </div>
+            
+            <div class="modal-body-pro">
+                <div class="tutor-box-ui">
+                    <label><i class="fas fa-user-tie"></i> Profesor Tutor:</label>
+                    <div class="input-action-group">
+                        <input type="text" id="nombreTutor" placeholder="Nombre del docente...">
+                        <button onclick="guardarTutor()" class="btn-action-save"><i class="fas fa-save"></i></button>
+                    </div>
+                </div>
+
+                <div class="admin-quick-actions">
+                    <button class="btn-import-ui" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-file-import"></i> Carga Masiva (.txt)
+                    </button>
+                    <input type="file" id="fileInput" style="display:none" accept=".txt" onchange="importarLista(this)">
+                </div>
+
+                <div class="add-student-ui">
+                    <label><i class="fas fa-user-plus"></i> Nuevo Estudiante:</label>
+                    <div class="input-action-group">
+                        <input type="text" id="nombreAlumno" placeholder="Apellidos y Nombres...">
+                        <button onclick="agregarAlumno()" class="btn-action-add"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="list-container-ui">
+                    <div class="list-header-ui">
+                        <span>Alumnos Registrados</span>
+                        <span class="badge-count" id="count-admin-list">0</span>
+                    </div>
+                    <ul id="listaAdminAlumnos" class="styled-list">
+                        </ul>
+                </div>
+            </div>
+            <button onclick="cerrarModalAlumnos()" class="btn-finish-ui">Finalizar Configuración</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>

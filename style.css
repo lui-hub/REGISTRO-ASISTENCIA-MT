@@ -1,0 +1,427 @@
+/* =========================================
+   1. VARIABLES Y CONFIGURACIÓN PREMIUM
+   ========================================= */
+:root {
+    --primary: #E31B2B;    /* Rojo Colegio */
+    --secondary: #4F85C7;  /* Azul Institucional */
+    --accent: #FFD700;     /* Dorado de Éxito */
+    --presente: #2ecc71;   /* Esmeralda */
+    --tardanza: #f1c40f;   /* Ámbar */
+    --justificado: #3498db;/* Peter River */
+    --bg: #f8fafc;         /* Gris azulado muy claro */
+    --text: #2d3436;       /* Gris oscuro profesional */
+    --border-radius: 16px;
+    --card-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    --premium-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: var(--bg); 
+    color: var(--text); 
+    overflow-x: hidden; 
+    line-height: 1.6;
+}
+
+.app-container { 
+    max-width: 900px; 
+    margin: auto; 
+    padding: 15px; 
+}
+
+/* =========================================
+   2. DASHBOARD DE ESTADÍSTICAS (Premium Cards)
+   ========================================= */
+.stats-dashboard { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 12px; 
+    margin-bottom: 20px; 
+}
+
+.stat-card { 
+    background: white; 
+    padding: 15px 5px; 
+    border-radius: var(--border-radius); 
+    text-align: center; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: var(--card-shadow);
+}
+
+.stat-val { 
+    font-size: 1.3rem; 
+    font-weight: 800; 
+    display: block; 
+    line-height: 1.2;
+}
+
+.stat-label { 
+    font-size: 0.65rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+    color: #a0aec0; 
+    font-weight: 700;
+}
+
+.stat-card.p .stat-val { color: var(--presente); }
+.stat-card.t .stat-val { color: var(--tardanza); }
+.stat-card.a .stat-val { color: var(--primary); }
+.stat-card.j .stat-val { color: var(--secondary); }
+
+/* =========================================
+   3. CABECERA PRINCIPAL (LOGO Y RELOJ)
+   ========================================= */
+.main-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: white; 
+    padding: 15px 25px; 
+    border-radius: var(--border-radius); 
+    margin-bottom: 15px; 
+    box-shadow: var(--card-shadow);
+}
+
+.header-brand { display: flex; align-items: center; gap: 15px; }
+.logo-img { height: 55px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+.brand-text h1 { font-size: 1.3rem; color: var(--primary); font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+.brand-text span { font-size: 0.8rem; color: #718096; font-weight: 500; }
+
+#reloj { 
+    font-weight: 800; 
+    color: var(--secondary); 
+    background: #edf2f7; 
+    padding: 10px 20px; 
+    border-radius: 12px; 
+    font-size: 0.95rem; 
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* =========================================
+   4. PANEL DE CONTROL (GLAS MORPHISM)
+   ========================================= */
+.control-panel { 
+    background: linear-gradient(135deg, var(--secondary) 0%, #3a68a1 100%);
+    padding: 25px; 
+    border-radius: 24px; 
+    margin-bottom: 15px; 
+    box-shadow: 0 10px 25px rgba(79, 133, 199, 0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.filter-row { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr; 
+    gap: 12px; 
+    margin-bottom: 15px; 
+}
+
+.input-group { 
+    background: rgba(255,255,255,0.15); 
+    backdrop-filter: blur(10px);
+    padding: 12px 18px; 
+    border-radius: 14px; 
+    border: 1px solid rgba(255,255,255,0.2); 
+    transition: 0.3s;
+}
+
+.input-group:focus-within { background: rgba(255,255,255,0.25); border-color: white; }
+
+.input-group select, .input-group input { 
+    background: transparent; 
+    border: none; 
+    color: white; 
+    width: 100%; 
+    outline: none; 
+    font-size: 0.9rem; 
+    font-weight: 600;
+}
+
+.input-group select option { color: #333; }
+
+.action-row { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 12px; 
+}
+
+.btn { 
+    flex: 1 1 20%; 
+    min-width: 100px;
+    border: none; 
+    padding: 15px 10px; 
+    border-radius: 14px; 
+    cursor: pointer; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+    font-size: 0.8rem; 
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+.btn-save { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(227, 27, 43, 0.3); }
+.btn-fast { background: #8e44ad; color: white; box-shadow: 0 4px 12px rgba(142, 68, 173, 0.3); }
+.btn-export { background: var(--accent); color: #2d3436; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); }
+.btn-monthly { background: #2d3436; color: white; }
+.btn-config { background: #f7fafc; color: #4a5568; }
+
+.btn:hover { transform: scale(1.05); }
+.btn:active { transform: scale(0.95); }
+
+/* =========================================
+   5. VISOR DE INFO (CANTIDAD Y TUTOR)
+   ========================================= */
+.info-resumen-grado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    border-left: 6px solid var(--secondary);
+    box-shadow: var(--card-shadow);
+}
+
+#infoTutorCabecera { font-weight: 700; color: #2d3748; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+#infoTutorCabecera i { color: var(--secondary); }
+
+.badge-estudiantes { 
+    background: #ebf4ff; 
+    color: var(--secondary); 
+    padding: 6px 18px; 
+    border-radius: 30px; 
+    font-size: 0.85rem;
+    font-weight: 800;
+    border: 1px solid rgba(79, 133, 199, 0.1);
+}
+
+/* =========================================
+   6. TABLA DE ASISTENCIA (ESTILO APP)
+   ========================================= */
+.content-card { 
+    background-color: white; 
+    border-radius: 24px; 
+    padding: 15px; 
+    box-shadow: var(--card-shadow); 
+}
+
+.table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; min-width: 500px; }
+th { 
+    padding: 15px; 
+    border-bottom: 2px solid #edf2f7; 
+    color: var(--secondary); 
+    font-size: 0.85rem; 
+    text-align: left; 
+    text-transform: uppercase;
+}
+
+td { padding: 18px 10px; border-bottom: 1px solid #f1f5f9; }
+
+.nom-est b { font-size: 0.95rem; color: #1a202c; letter-spacing: -0.2px; }
+
+.attendance-btns { display: flex; gap: 8px; margin-bottom: 8px; }
+.btn-check { display: none; }
+
+.btn-label { 
+    width: 42px; height: 42px; 
+    border-radius: 12px; 
+    border: 2px solid #edf2f7; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 800; 
+    cursor: pointer; 
+    color: #cbd5e0; 
+    font-size: 0.95rem; 
+    transition: all 0.2s ease;
+}
+
+/* Colores dinámicos al marcar la asistencia */
+.btn-check[value="P"]:checked + .btn-label { 
+    background-color: var(--presente); 
+    color: white; 
+    border-color: transparent; 
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+}
+
+.btn-check[value="T"]:checked + .btn-label { 
+    background-color: var(--tardanza); 
+    color: white; 
+    border-color: transparent; 
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3);
+}
+
+.btn-check[value="A"]:checked + .btn-label { 
+    background-color: var(--primary); 
+    color: white; 
+    border-color: transparent; 
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(227, 27, 43, 0.3);
+}
+
+.btn-check[value="J"]:checked + .btn-label { 
+    background-color: var(--justificado); 
+    color: white; 
+    border-color: transparent; 
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+.obs-input { 
+    width: 100%; 
+    max-width: 200px; 
+    padding: 8px 12px; 
+    border-radius: 10px; 
+    border: 1px solid #edf2f7; 
+    font-size: 0.8rem; 
+    outline: none; 
+    background-color: #f8fafc; 
+    transition: 0.2s;
+}
+
+.obs-input:focus { border-color: var(--secondary); background-color: white; }
+
+/* =========================================
+   7. MODAL DE GESTIÓN AVANZADA
+   ========================================= */
+.modal { 
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0; 
+    width: 100%; height: 100%; 
+    background-color: rgba(15, 23, 42, 0.8); 
+    backdrop-filter: blur(8px); 
+}
+
+.admin-premium { 
+    background-color: white; 
+    margin: 5% auto; 
+    width: 95%; 
+    max-width: 500px; 
+    border-radius: 28px; 
+    overflow: hidden; 
+    box-shadow: var(--premium-shadow);
+    border-top: 8px solid var(--primary);
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header-pro {
+    background-color: white;
+    padding: 25px 25px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.header-main-info h2 { font-size: 1.2rem; color: #1e293b; display: flex; align-items: center; gap: 10px; }
+.header-main-info h2 i { color: var(--secondary); }
+.header-main-info span { color: var(--secondary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+
+.modal-body-pro { padding: 25px; background-color: #fafbfc; }
+
+/* Cajas de entrada avanzadas con botón integrado */
+.tutor-box-ui, .add-student-ui { margin-bottom: 20px; }
+.tutor-box-ui label, .add-student-ui label {
+    display: block; font-size: 0.75rem; font-weight: 700;
+    color: var(--secondary); margin-bottom: 8px; text-transform: uppercase;
+}
+
+.input-action-group { display: flex; gap: 8px; }
+.input-action-group input {
+    flex: 1; padding: 12px 18px; border-radius: 12px;
+    border: 2px solid #eef2f7; outline: none; transition: 0.3s;
+}
+
+.input-action-group input:focus { border-color: var(--secondary); background-color: white; }
+
+.btn-action-save, .btn-action-add {
+    width: 50px; border: none; border-radius: 12px; color: white; cursor: pointer; transition: 0.3s;
+}
+.btn-action-save { background-color: var(--presente); }
+.btn-action-add { background-color: var(--secondary); }
+
+.btn-import-ui {
+    width: 100%; padding: 12px; background-color: #2d3748; color: white;
+    border: none; border-radius: 12px; font-size: 0.8rem; font-weight: 600;
+    margin-bottom: 20px; cursor: pointer;
+}
+
+/* Lista de alumnos estilizada */
+.list-container-ui { 
+    border: 1px solid #eef2f7; 
+    border-radius: 20px; 
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+}
+
+.list-header-ui {
+    background-color: #f8f9fa; padding: 12px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem; font-weight: 700; color: #666;
+}
+
+.badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; }
+
+.styled-list {
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.admin-item-pro {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 20px; border-bottom: 1px solid #f9f9f9;
+}
+
+.admin-item-pro:hover { background-color: #fdfdfd; }
+.admin-item-pro span { font-size: 0.85rem; color: #4a5568; font-weight: 500; }
+
+.btn-delete-ui {
+    background: #feebeb; color: var(--primary);
+    border: none; padding: 6px 12px; border-radius: 8px;
+    font-weight: 700; font-size: 0.7rem; cursor: pointer;
+}
+
+.btn-finish-ui {
+    width: 100%; padding: 18px; border: none;
+    background: #1e293b; color: white;
+    font-weight: 800; cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   8. RESPONSIVIDAD ADICIONAL
+   ========================================= */
+@media (max-width: 600px) {
+    .app-container { padding: 10px; }
+    .stats-dashboard { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-card { padding: 8px 3px; }
+    .filter-row { grid-template-columns: 1fr; }
+    .btn-label { width: 36px; height: 36px; font-size: 0.8rem; }
+}
