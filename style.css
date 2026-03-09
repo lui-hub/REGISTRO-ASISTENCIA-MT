@@ -425,3 +425,59 @@ td { padding: 18px 10px; border-bottom: 1px solid #f1f5f9; }
     .filter-row { grid-template-columns: 1fr; }
     .btn-label { width: 36px; height: 36px; font-size: 0.8rem; }
 }
+
+/* =========================================
+   9. MEJORAS DE FEEDBACK Y ANIMACIONES
+   ========================================= */
+
+/* Estado de carga para el botón Guardar */
+.btn:disabled {
+    background-color: #a0aec0 !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.7;
+}
+
+/* Color específico para el Reporte Mensual (Elegante) */
+.btn-monthly {
+    background: #2d3436; /* Gris carbón premium */
+    color: white;
+    box-shadow: 0 4px 12px rgba(45, 52, 54, 0.3);
+}
+
+.btn-monthly:hover {
+    background: #000000;
+}
+
+/* Animación de Spinner para el icono cuando se guarda */
+.fa-spin {
+    animation: spin-loader 1s linear infinite;
+}
+
+@keyframes spin-loader {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilo para el scrollbar de la lista de alumnos (más fino para tablet) */
+.styled-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.styled-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.styled-list::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+/* Efecto visual al presionar botones en pantallas táctiles */
+@media (hover: none) {
+    .btn:active {
+        transform: scale(0.92);
+        filter: brightness(0.8);
+    }
+}
