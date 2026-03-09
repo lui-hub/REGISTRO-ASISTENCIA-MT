@@ -25,19 +25,17 @@ const estructuraColegio = {
 // Variables de estado sincronizadas con la nube
 let alumnosData = {};
 let tutoresData = {};
+let lastChecked = null; // Para deseleccionar radios
 
 document.addEventListener('DOMContentLoaded', () => {
     fijarFechaHoy();
     
     // --- ESCUCHADORES EN TIEMPO REAL (FIREBASE) ---
-    
-    // Sincronizar Alumnos
     db.ref('alumnos').on('value', (snapshot) => {
         alumnosData = snapshot.val() || {};
-        actualizarGrados(); // Refresca las listas si alguien agrega un alumno desde otro equipo
+        actualizarGrados(); 
     });
 
-    // Sincronizar Tutores
     db.ref('tutores').on('value', (snapshot) => {
         tutoresData = snapshot.val() || {};
         cargarTablaAsistencia();
@@ -53,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function fijarFechaHoy() {
     const selector = document.getElementById('fechaAsistencia');
     const hoy = new Date();
-    // Ajuste de zona horaria para Perú
     hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
     selector.value = hoy.toISOString().split('T')[0];
 }
@@ -85,10 +82,8 @@ function guardarTutor() {
     const nombre = document.getElementById('nombreTutor').value.trim();
     
     if(!g) return alert("Seleccione grado primero");
-    
     const key = `${n}_${g}`.replace(/ /g, "_");
     
-    // Guardar en Firebase
     db.ref('tutores/' + key).set(nombre).then(() => {
         alert("✅ Tutor guardado en la nube");
     });
@@ -105,9 +100,10 @@ function cargarTablaAsistencia() {
     const infoTutor = document.getElementById('infoTutorCabecera');
     const txtConteo = document.getElementById('txt-conteo-alumnos');
 
-    lista.innerHTML = '';
-    
+    lastChecked = null; // Reiniciar rastreador de deselección
+
     if (!g) {
+        lista.innerHTML = '';
         txtConteo.innerText = "0";
         infoTutor.innerHTML = '<i class="fas fa-info-circle"></i> Seleccione un grado para comenzar';
         return;
@@ -125,14 +121,12 @@ function cargarTablaAsistencia() {
         return;
     }
 
-    // Consultar asistencia guardada en Firebase para esta fecha específica
     db.ref(`asistencias/${key}/${f}`).once('value', (snapshot) => {
         const asisGuardada = snapshot.val() || [];
         lista.innerHTML = '';
 
         alumnos.forEach((nom, i) => {
             const reg = asisGuardada.find(x => x.alumno === nom) || {estado:'', nota:''};
-            
             lista.innerHTML += `
                 <tr>
                     <td>${i+1}</td>
@@ -140,7 +134,14 @@ function cargarTablaAsistencia() {
                     <td>
                         <div class="attendance-btns">
                             ${['P','T','A','J'].map(e => `
-                                <input type="radio" name="r_${i}" id="${e.toLowerCase()}_${i}" value="${e}" class="btn-check" onchange="actualizarDashboard()" ${reg.estado === e ? 'checked' : ''}>
+                                <input type="radio" 
+                                       name="r_${i}" 
+                                       id="${e.toLowerCase()}_${i}" 
+                                       value="${e}" 
+                                       class="btn-check" 
+                                       onchange="actualizarDashboard()" 
+                                       onclick="toggleRadio(this)"
+                                       ${reg.estado === e ? 'checked' : ''}>
                                 <label for="${e.toLowerCase()}_${i}" class="btn-label">${e}</label>
                             `).join('')}
                         </div>
@@ -150,6 +151,20 @@ function cargarTablaAsistencia() {
         });
         actualizarDashboard();
     });
+}
+
+// Función nueva para deseleccionar
+function toggleRadio(radio) {
+    if (radio.dataset.wasChecked === "true") {
+        radio.checked = false;
+        radio.dataset.wasChecked = "false";
+        actualizarDashboard();
+    } else {
+        // Limpiar otros del mismo grupo
+        const name = radio.name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.dataset.wasChecked = "false");
+        radio.dataset.wasChecked = "true";
+    }
 }
 
 function actualizarDashboard() {
@@ -164,12 +179,15 @@ function actualizarDashboard() {
 }
 
 function marcarTodosPresentes() {
-    document.querySelectorAll('input[value="P"]').forEach(r => r.checked = true);
+    document.querySelectorAll('input[value="P"]').forEach(r => {
+        r.checked = true;
+        r.dataset.wasChecked = "true";
+    });
     actualizarDashboard();
 }
 
 /* =========================================
-   4. PERSISTENCIA EN NUBE Y EXPORTACIÓN
+   4. PERSISTENCIA Y REPORTES
    ========================================= */
 function guardarAsistencia() {
     const n = document.getElementById('selectNivel').value;
@@ -178,6 +196,11 @@ function guardarAsistencia() {
     
     if(!g) return alert("Seleccione un grado primero");
     
+    const btnSave = document.querySelector('.btn-save');
+    const originalText = btnSave.innerHTML;
+    btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    btnSave.disabled = true;
+
     let registros = [];
     document.querySelectorAll('#listaEstudiantes tr').forEach(tr => {
         const b = tr.querySelector('b');
@@ -193,10 +216,59 @@ function guardarAsistencia() {
     
     const key = `${n}_${g}`.replace(/ /g, "_");
     
-    // Guardar en Firebase (Ruta: asistencias/Nivel_Grado/Fecha)
-    db.ref(`asistencias/${key}/${f}`).set(registros).then(() => {
-        alert("🚀 ¡Sincronizado con la nube con éxito!");
+    db.ref(`asistencias/${key}/${f}`).set(registros)
+    .then(() => alert("🚀 ¡Sincronizado con éxito!"))
+    .catch(() => alert("❌ Error de conexión. Intente de nuevo."))
+    .finally(() => {
+        btnSave.innerHTML = originalText;
+        btnSave.disabled = false;
     });
+}
+
+async function exportarReporteMensual() {
+    const n = document.getElementById('selectNivel').value;
+    const g = document.getElementById('selectGrado').value;
+    const f = document.getElementById('fechaAsistencia').value;
+
+    if (!g) return alert("Seleccione grado primero");
+
+    const mesSeleccionado = f.substring(0, 7); 
+    const key = `${n}_${g}`.replace(/ /g, "_");
+
+    const snapshot = await db.ref(`asistencias/${key}`).once('value');
+    const todasLasAsistencias = snapshot.val();
+
+    if (!todasLasAsistencias) return alert("No hay datos en la nube.");
+
+    const diasDelMes = Object.keys(todasLasAsistencias).filter(fecha => fecha.startsWith(mesSeleccionado)).sort();
+    if (diasDelMes.length === 0) return alert("No hay datos en este mes.");
+
+    const alumnosDelGrado = (alumnosData[key] || []).sort();
+    let resumen = {};
+    alumnosDelGrado.forEach(nom => resumen[nom] = { P: 0, T: 0, A: 0, J: 0 });
+
+    diasDelMes.forEach(dia => {
+        todasLasAsistencias[dia].forEach(reg => {
+            if (resumen[reg.alumno] && resumen[reg.alumno][reg.estado] !== undefined) {
+                resumen[reg.alumno][reg.estado]++;
+            }
+        });
+    });
+
+    let csv = "\uFEFFREPORTE MENSUAL - MIS TALENTOS\n";
+    csv += `GRADO:;${g};MES:;${mesSeleccionado}\n\n`;
+    csv += `ESTUDIANTE;P;T;A;J;TOTAL ASIST.\n`;
+
+    alumnosDelGrado.forEach(nom => {
+        const r = resumen[nom];
+        csv += `${nom};${r.P};${r.T};${r.A};${r.J};${r.P + r.T}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Reporte_${g}_${mesSeleccionado}.csv`;
+    link.click();
 }
 
 function exportarCSV() {
@@ -207,16 +279,13 @@ function exportarCSV() {
 
     db.ref(`asistencias/${key}/${f}`).once('value', (snapshot) => {
         const data = snapshot.val();
-        if(!data) return alert("No hay datos guardados para esta fecha en la nube.");
+        if(!data) return alert("Sin datos hoy.");
 
-        let csv = "\uFEFFI.E.P. MIS TALENTOS - REGISTRO DE ASISTENCIA\n";
-        csv += `NIVEL:;${n};GRADO:;${g}\n`;
-        csv += `FECHA:;${f};TUTOR:;${tutoresData[key] || 'S/A'}\n\n`;
-        csv += `N°;ESTUDIANTE;ESTADO;OBSERVACIÓN\n`;
+        let csv = "\uFEFFI.E.P. MIS TALENTOS\n";
+        csv += `FECHA:;${f};GRADO:;${g}\n\n`;
+        csv += `N°;ESTUDIANTE;ESTADO;NOTA\n`;
 
-        data.forEach((r, i) => {
-            csv += `${i+1};${r.alumno};${r.estado};${r.nota}\n`;
-        });
+        data.forEach((r, i) => csv += `${i+1};${r.alumno};${r.estado};${r.nota}\n`);
 
         const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         const link = document.createElement("a");
@@ -227,57 +296,42 @@ function exportarCSV() {
 }
 
 /* =========================================
-   5. MODAL DE GESTIÓN DE ALUMNOS (NUBE)
+   5. GESTIÓN DE ALUMNOS
    ========================================= */
 function abrirModalAlumnos() {
     const nivel = document.getElementById('selectNivel').value;
     const grado = document.getElementById('selectGrado').value;
-    
-    if(!grado) return alert("Seleccione nivel y grado primero");
+    if(!grado) return alert("Seleccione grado primero");
     
     document.getElementById('modalEstudiantes').style.display = "block";
     document.getElementById('infoGradoActual').innerText = `${nivel} > ${grado}`;
-    
     const key = `${nivel}_${grado}`.replace(/ /g, "_");
     document.getElementById('nombreTutor').value = tutoresData[key] || "";
-    
     actualizarListaAdmin();
 }
 
-function cerrarModalAlumnos() { 
-    document.getElementById('modalEstudiantes').style.display = "none"; 
-}
+function cerrarModalAlumnos() { document.getElementById('modalEstudiantes').style.display = "none"; }
 
 function agregarAlumno() {
     const n = document.getElementById('selectNivel').value;
     const g = document.getElementById('selectGrado').value;
     const nom = document.getElementById('nombreAlumno').value.trim().toUpperCase();
-    
     if(!nom) return;
-    
     const key = `${n}_${g}`.replace(/ /g, "_");
     if(!alumnosData[key]) alumnosData[key] = [];
-    if(alumnosData[key].includes(nom)) return alert("El alumno ya existe");
-
+    if(alumnosData[key].includes(nom)) return alert("Ya existe");
     alumnosData[key].push(nom);
-    
-    // Guardar lista completa en Firebase
     db.ref('alumnos/' + key).set(alumnosData[key]);
-    
     document.getElementById('nombreAlumno').value = "";
     actualizarListaAdmin();
 }
 
 function eliminarAlumno(i) {
-    if(!confirm("¿Está seguro de eliminar a este estudiante de la nube?")) return;
-    
+    if(!confirm("¿Eliminar estudiante?")) return;
     const n = document.getElementById('selectNivel').value;
     const g = document.getElementById('selectGrado').value;
     const key = `${n}_${g}`.replace(/ /g, "_");
-    
     alumnosData[key].sort().splice(i, 1);
-    
-    // Actualizar Firebase
     db.ref('alumnos/' + key).set(alumnosData[key]);
     actualizarListaAdmin();
 }
@@ -288,34 +342,27 @@ function actualizarListaAdmin() {
     const key = `${n}_${g}`.replace(/ /g, "_");
     const lista = document.getElementById('listaAdminAlumnos');
     const alumnos = (alumnosData[key] || []).sort();
-    
     document.getElementById('count-admin-list').innerText = alumnos.length;
-    
     lista.innerHTML = alumnos.map((nombre, i) => `
         <li class="admin-item-pro">
             <span>${i + 1}. ${nombre}</span>
-            <button class="btn-delete-ui" onclick="eliminarAlumno(${i})">
-                <i class="fas fa-trash-alt"></i> Eliminar
-            </button>
+            <button class="btn-delete-ui" onclick="eliminarAlumno(${i})"><i class="fas fa-trash-alt"></i></button>
         </li>`).join('');
 }
 
-// Carga Masiva TXT
 function importarLista(input) {
     const n = document.getElementById('selectNivel').value;
     const g = document.getElementById('selectGrado').value;
     const key = `${n}_${g}`.replace(/ /g, "_");
-    
     const reader = new FileReader();
+    reader.readAsText(input.files[0], "UTF-8"); 
     reader.onload = function(e) {
-        const lineas = e.target.result.split('\n');
+        const lineas = e.target.result.split(/\r?\n/);
         let nuevos = alumnosData[key] || [];
         lineas.forEach(l => {
             const nom = l.trim().toUpperCase();
             if(nom && !nuevos.includes(nom)) nuevos.push(nom);
         });
-        db.ref('alumnos/' + key).set(nuevos);
-        alert("✅ Lista cargada y sincronizada");
+        db.ref('alumnos/' + key).set(nuevos).then(() => alert("✅ Lista sincronizada"));
     };
-    reader.readAsText(input.files[0]);
 }
