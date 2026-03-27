@@ -416,6 +416,66 @@ td { padding: 18px 10px; border-bottom: 1px solid #f1f5f9; }
 }
 
 /* =========================================
+   7.1 ESTILOS ESPECÍFICOS PARA BOTONES DE ACCIÓN (EDITAR/ELIMINAR)
+   ========================================= */
+.admin-btns {
+    display: flex;
+    gap: 8px; /* Espacio entre los botones de la lista */
+}
+
+/* Botón Editar - Estilo Ámbar/Naranja */
+.btn-edit-ui {
+    background: #fff3e0; /* Naranja muy claro de fondo */
+    color: #f39c12;    /* Naranja vibrante para el icono */
+    border: 1px solid rgba(243, 156, 18, 0.2);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit-ui:hover {
+    background: #f39c12;
+    color: white;
+    box-shadow: 0 4px 10px rgba(243, 156, 18, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Ajuste al botón Eliminar para que haga juego con el de Editar */
+.btn-delete-ui {
+    background: #feebeb; /* Rojo muy claro de fondo */
+    color: var(--primary);
+    border: 1px solid rgba(227, 27, 43, 0.1);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-ui:hover {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(227, 27, 43, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Animación sutil al aparecer el modal */
+.admin-premium {
+    /* ... mantén tu código anterior y asegúrate de que tenga esto: */
+    animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* =========================================
    8. RESPONSIVIDAD ADICIONAL
    ========================================= */
 @media (max-width: 600px) {
