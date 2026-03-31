@@ -117,9 +117,12 @@
                     </div>
                 </div>
 
-                <div class="admin-quick-actions">
-                    <button class="btn-import-ui" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-file-import"></i> Carga Masiva (.txt)
+                <div class="admin-quick-actions" style="display: flex; gap: 10px;">
+                    <button class="btn-import-ui" onclick="document.getElementById('fileInput').click()" style="flex: 1;">
+                        <i class="fas fa-file-import"></i> Carga Masiva
+                    </button>
+                    <button class="btn-import-ui" onclick="exportarSoloNombres()" style="flex: 1; background-color: #4a5568;">
+                        <i class="fas fa-file-download"></i> Exportar Lista
                     </button>
                     <input type="file" id="fileInput" style="display:none" accept=".txt" onchange="importarLista(this)">
                 </div>
@@ -146,9 +149,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <script src="script.js"></script>
 </body>
 </html>
