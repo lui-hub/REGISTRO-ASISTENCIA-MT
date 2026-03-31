@@ -471,3 +471,26 @@ function importarLista(input) {
 
     reader.onerror = () => alert("❌ Error al leer el archivo .txt");
 }
+
+/* =========================================
+   6. NUEVO: EXPORTAR SOLO NOMBRES (TXT)
+   ========================================= */
+function exportarSoloNombres() {
+    const n = document.getElementById('selectNivel').value;
+    const g = document.getElementById('selectGrado').value;
+    if (!g) return alert("⚠️ Seleccione un grado para exportar.");
+    const key = `${n}_${g}`.replace(/ /g, "_");
+    const alumnos = (alumnosData[key] || []).sort();
+    if (alumnos.length === 0) return alert("❌ No hay alumnos.");
+    
+    const contenido = alumnos.join("\r\n");
+    const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Lista_${g.replace(/ /g, "_")}_2026.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
