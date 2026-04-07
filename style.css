@@ -541,3 +541,221 @@ td { padding: 18px 10px; border-bottom: 1px solid #f1f5f9; }
         filter: brightness(0.8);
     }
 }
+/* =========================================
+   10. BOTÓN DE HISTORIAL ANUAL (INTEGRACIÓN)
+   ========================================= */
+
+/* Contenedor flexible para alinear botones e icono en la celda */
+.action-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 2px 0;
+}
+
+/* Botón de Historial Estilizado */
+.btn-view-history {
+    background: #f0f7ff; /* Azul muy pálido */
+    color: var(--secondary);
+    border: 1px solid rgba(79, 133, 199, 0.2);
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0; /* Evita que se encoja en pantallas pequeñas */
+}
+
+.btn-view-history:hover {
+    background: var(--secondary);
+    color: white;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 5px 15px rgba(79, 133, 199, 0.3);
+    border-color: transparent;
+}
+
+/* Ajuste responsivo para el input de notas al lado del botón */
+@media (max-width: 600px) {
+    .action-container {
+        gap: 8px;
+    }
+    
+    .btn-view-history {
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+    }
+
+    .obs-input {
+        max-width: 120px; /* Se ajusta mejor en celulares */
+    }
+}
+
+/* Efecto visual cuando el mouse está encima de la fila para resaltar el botón */
+tr:hover .btn-view-history {
+    border-color: var(--secondary);
+}
+
+/* =========================================
+   11. MODAL DE HISTORIAL ESPECÍFICO (Premium)
+   ========================================= */
+
+/* Aseguramos que el modal de historial esté por encima de otros elementos */
+#modalHistorial {
+    z-index: 1100;
+}
+
+/* Aplicamos un color de borde superior diferente para diferenciarlo del de Gestión */
+#modalHistorial .admin-premium {
+    border-top: 8px solid var(--secondary);
+}
+
+/* Ajuste del dashboard pequeño dentro del modal */
+#modalHistorial .stats-dashboard {
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas para P, T, A, J */
+    gap: 10px;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+}
+
+/* Estilo para cada fila de la lista de historial */
+#modalHistorial .admin-item-pro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+#modalHistorial .admin-item-pro:hover {
+    background-color: #f0f7ff;
+    transform: translateX(5px);
+}
+
+/* Formato de la fecha y observación dentro de la fila */
+.historial-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.historial-fecha {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.historial-obs {
+    font-size: 0.75rem;
+    color: #718096;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+/* Badge circular para el estado en el historial */
+#modalHistorial .btn-label {
+    width: 34px;
+    height: 34px;
+    font-size: 0.8rem;
+    cursor: default; /* No es clicable aquí */
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Personalización del scrollbar interno para el historial */
+#lista-historial-detalle::-webkit-scrollbar {
+    width: 5px;
+}
+
+#lista-historial-detalle::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 10px;
+}
+
+/* Botón cerrar específico del historial */
+.btn-close-historial {
+    background: var(--secondary);
+    color: white;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-close-historial:hover {
+    filter: brightness(1.1);
+}
+
+/* Responsividad para el modal en móviles */
+@media (max-width: 600px) {
+    #modalHistorial .stats-dashboard {
+        grid-template-columns: repeat(2, 1fr); /* 2x2 en celulares */
+    }
+}
+
+/* =========================================
+   12. OPTIMIZACIÓN PARA TABLET (MODAL FLEX)
+   ========================================= */
+
+/* 1. Limitamos la altura del modal para que no se salga de la pantalla */
+#modalHistorial .admin-premium {
+    max-height: 85vh; /* 85% de la altura de la tablet */
+    display: flex;
+    flex-direction: column; /* Apila: Cabecera -> Cuerpo -> Footer */
+    margin: 5vh auto;      /* Centrado vertical */
+}
+
+/* 2. Hacemos que la cabecera no se encoja */
+#modalHistorial .modal-header-pro {
+    flex-shrink: 0;
+}
+
+/* 3. El cuerpo es el único que puede crecer y tener scroll */
+#modalHistorial .modal-body-pro {
+    flex: 1;               /* Toma todo el espacio disponible */
+    overflow-y: auto;      /* Habilita el scroll interno */
+    padding: 20px;
+    background-color: #fafbfc;
+}
+
+/* 4. El footer (donde está el botón Excel) se queda fijo abajo */
+/* NOTA: Asegúrate de envolver tus botones en un div con estas propiedades en el HTML */
+.modal-footer-tablet {
+    flex-shrink: 0;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    background: white;
+    border-top: 1px solid #f1f5f9;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.02); /* Sombra sutil hacia arriba */
+}
+
+/* 5. Estilo específico para el botón de Excel dentro del modal */
+.btn-excel-premium {
+    background: #27ae60 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2) !important;
+}
+
+/* Ajustes para pantallas táctiles (Tablets) */
+@media (max-height: 700px) {
+    #modalHistorial .admin-premium {
+        margin: 2vh auto;
+        max-height: 95vh;
+    }
+    #modalHistorial .stats-dashboard {
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+}
