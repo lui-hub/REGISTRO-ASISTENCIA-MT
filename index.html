@@ -147,6 +147,59 @@
         </div>
     </div>
 
+    <div id="modalHistorial" class="modal">
+    <div class="admin-premium" style="max-width: 500px; border-top: 5px solid #3b82f6;">
+        
+        <div class="modal-header-pro">
+            <div class="header-main-info">
+                <div>
+                    <span id="h-grado-label">HISTORIAL ANUAL</span>
+                    <h2 id="h-nombre-estudiante">
+                        <i class="fas fa-user-graduate"></i> Nombre del Alumno
+                    </h2>
+                </div>
+            </div>
+            <button onclick="cerrarModalHistorial()" class="btn-close-x" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748b;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body-pro">
+            <div class="stats-dashboard">
+                <div class="stat-card p"><span class="stat-val" id="h-count-p">0</span><span class="stat-label">P</span></div>
+                <div class="stat-card t"><span class="stat-val" id="h-count-t">0</span><span class="stat-label">T</span></div>
+                <div class="stat-card a"><span class="stat-val" id="h-count-a">0</span><span class="stat-label">A</span></div>
+                <div class="stat-card j"><span class="stat-val" id="h-count-j">0</span><span class="stat-label">J</span></div>
+            </div>
+
+            <div class="list-container-ui">
+                <div class="list-header-ui">
+                    <span>DETALLE DE ASISTENCIAS</span>
+                    <span class="badge-count" id="h-total-dias">0 días</span>
+                </div>
+                <div id="lista-historial-detalle"></div>
+            </div>
+        </div>
+
+        <div class="modal-footer-tablet">
+            <button onclick="exportarHistorialAlumno()" class="btn btn-excel-premium">
+                <i class="fas fa-file-excel"></i> EXCEL
+            </button>
+            <button onclick="cerrarModalHistorial()" class="btn btn-monthly">
+                CERRAR
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
+
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
