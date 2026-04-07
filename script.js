@@ -115,20 +115,28 @@ function cargarTablaAsistencia() {
         alumnos.forEach((nom, i) => {
             const nomLimpio = nom.trim().toUpperCase();
             const reg = asisGuardada.find(x => x.alumno.trim().toUpperCase() === nomLimpio) || {estado:'', nota:''};
+            
             lista.innerHTML += `
                 <tr>
                     <td>${i+1}</td>
                     <td class="nom-est"><b>${nomLimpio}</b></td>
                     <td>
-                        <div class="attendance-btns">
-                            ${['P','T','A','J'].map(e => `
-                                <input type="radio" name="r_${i}" id="${e.toLowerCase()}_${i}" value="${e}" 
-                                       class="btn-check" onchange="actualizarDashboard()" onclick="toggleRadio(this)"
-                                       ${reg.estado === e ? 'checked' : ''}>
-                                <label for="${e.toLowerCase()}_${i}" class="btn-label">${e}</label>
-                            `).join('')}
+                        <div class="action-container" style="display: flex; align-items: center; gap: 10px;">
+                            <div class="attendance-btns">
+                                ${['P','T','A','J'].map(e => `
+                                    <input type="radio" name="r_${i}" id="${e.toLowerCase()}_${i}" value="${e}" 
+                                           class="btn-check" onchange="actualizarDashboard()" onclick="toggleRadio(this)"
+                                           ${reg.estado === e ? 'checked' : ''}>
+                                    <label for="${e.toLowerCase()}_${i}" class="btn-label">${e}</label>
+                                `).join('')}
+                            </div>
+
+                            <button onclick="verHistorial('${nomLimpio}')" class="btn-view-history" title="Ver historial anual">
+                                <i class="fas fa-calendar-alt"></i>
+                            </button>
+
+                            <input type="text" class="obs-input" placeholder="Nota..." id="obs_${i}" value="${reg.nota}" style="flex: 1;">
                         </div>
-                        <input type="text" class="obs-input" placeholder="Nota..." id="obs_${i}" value="${reg.nota}">
                     </td>
                 </tr>`;
         });
@@ -493,4 +501,156 @@ function exportarSoloNombres() {
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
+}
+
+/* =========================================
+   7. CONSULTA DE HISTORIAL ANUAL (MODAL PREMIUM)
+   ========================================= */
+async function verHistorial(nom) {
+    const n = document.getElementById('selectNivel').value;
+    const g = document.getElementById('selectGrado').value;
+    if(!g) return;
+
+    const key = `${n}_${g}`.replace(/ /g, "_");
+    const modal = document.getElementById('modalHistorial');
+    const listaDetalle = document.getElementById('lista-historial-detalle');
+    
+    modal.style.display = "block";
+    listaDetalle.innerHTML = '<p style="text-align:center; padding:20px; color:#666;"><i class="fas fa-spinner fa-spin"></i> Cargando historial...</p>';
+
+    document.getElementById('h-nombre-estudiante').innerHTML = `<i class="fas fa-user-graduate"></i> ${nom}`;
+    document.getElementById('h-grado-label').innerText = `HISTORIAL ANUAL - ${g}`;
+
+    try {
+        const snap = await db.ref(`asistencias/${key}`).once('value');
+        const data = snap.val() || {};
+        
+        let resumen = { P: 0, T: 0, A: 0, J: 0 };
+        let itemsHTML = "";
+        let totalDias = 0;
+
+        // Ordenar fechas de más reciente a más antigua
+        const fechasOrdenadas = Object.keys(data).sort().reverse();
+
+        fechasOrdenadas.forEach(fecha => {
+            const registroDia = data[fecha].find(x => x.alumno.trim().toUpperCase() === nom);
+            
+            if (registroDia && registroDia.estado !== "S/R") {
+                const est = registroDia.estado.toUpperCase();
+                if (resumen[est] !== undefined) {
+                    resumen[est]++;
+                    totalDias++;
+                }
+                
+                const fechaLegible = fecha.split('-').reverse().join('/');
+
+                // HTML optimizado para tu sección 11 del CSS
+                itemsHTML += `
+                    <div class="admin-item-pro">
+                        <div class="historial-info">
+                            <span class="historial-fecha">${fechaLegible}</span>
+                            <span class="historial-obs">${registroDia.nota || "Sin observaciones"}</span>
+                        </div>
+                        <div class="btn-label" style="background:${getColorEstado(est)}; color:white; border:none; display:flex; align-items:center; justify-content:center;">
+                            ${est}
+                        </div>
+                    </div>`;
+            }
+        });
+
+        if (totalDias === 0) {
+            listaDetalle.innerHTML = '<p style="text-align:center; padding:20px;">No hay registros de asistencia para este alumno.</p>';
+        } else {
+            listaDetalle.innerHTML = itemsHTML;
+        }
+
+        document.getElementById('h-count-p').innerText = resumen.P;
+        document.getElementById('h-count-t').innerText = resumen.T;
+        document.getElementById('h-count-a').innerText = resumen.A;
+        document.getElementById('h-count-j').innerText = resumen.J;
+        document.getElementById('h-total-dias').innerText = `${totalDias} registros`;
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("❌ Error al conectar con Firebase");
+    }
+}
+
+// Función auxiliar para cerrar el modal
+function cerrarModalHistorial() {
+    document.getElementById('modalHistorial').style.display = "none";
+}
+
+// Función auxiliar para colores en el historial
+function getColorEstado(estado) {
+    const colores = {
+        'P': '#2ecc71', // Esmeralda (Presente)
+        'T': '#f1c40f', // Ámbar (Tardanza)
+        'A': '#E31B2B', // Rojo (Falta)
+        'J': '#3498db'  // Azul (Justificado)
+    };
+    return colores[estado] || '#cbd5e0';
+}
+
+function exportarHistorialAlumno() {
+    // 1. Captura de datos del DOM
+    const nombre = document.getElementById('h-nombre-estudiante').innerText.trim();
+    const grado = document.getElementById('h-grado-label').innerText.trim();
+    const p = document.getElementById('h-count-p').innerText;
+    const t = document.getElementById('h-count-t').innerText;
+    const a = document.getElementById('h-count-a').innerText;
+    const j = document.getElementById('h-count-j').innerText;
+    const total = document.getElementById('h-total-dias').innerText;
+
+    // 2. Estructura Profesional (con espacios y encabezados claros)
+    const data = [
+        ["I.E.P. MIS TALENTOS"], // A1
+        ["SISTEMA DE GESTIÓN ACADÉMICA 2026"], // A2
+        [""], // Espacio
+        ["REPORTE CONSOLIDADO DE ASISTENCIA"], // A4
+        ["------------------------------------------------------------"],
+        ["DATOS DEL ESTUDIANTE"],
+        ["NOMBRE COMPLETO:", nombre.replace('Nombre del Alumno', '')],
+        ["GRADO Y SECCIÓN:", grado],
+        ["FECHA DE EMISIÓN:", new Date().toLocaleDateString()],
+        [""],
+        ["RESUMEN DE ESTADOS", "CANTIDAD"], // Encabezado de tabla
+        ["PRESENTE (P)", parseInt(p)],
+        ["TARDANZA (T)", parseInt(t)],
+        ["FALTA (A)", parseInt(a)],
+        ["JUSTIFICADO (J)", parseInt(j)],
+        ["--------------------------", "----------"],
+        ["TOTAL REGISTROS:", total],
+        [""],
+        [""],
+        ["___________________________"],
+        ["Firma del Tutor / Dirección"]
+    ];
+
+    // 3. Creación del libro y hoja
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+
+    // 4. Configuración de diseño profesional
+    // Definimos anchos de columna (Col A: 30 carácteres, Col B: 20 carácteres)
+    ws['!cols'] = [
+        { wch: 30 }, 
+        { wch: 20 }
+    ];
+
+    // Combinación de celdas para el título (Merge)
+    // s = start, e = end, r = row, c = col (índice 0)
+    if(!ws['!merges']) ws['!merges'] = [];
+    ws['!merges'].push(
+        { s: {r: 0, c: 0}, e: {r: 0, c: 1} }, // Une A1 y B1
+        { s: {r: 1, c: 0}, e: {r: 1, c: 1} }, // Une A2 y B2
+        { s: {r: 3, c: 0}, e: {r: 3, c: 1} }  // Une A4 y B4
+    );
+
+    // 5. Generación del archivo
+    XLSX.utils.book_append_sheet(wb, ws, "Resumen");
+    
+    // Nombre de archivo limpio
+    const nombreArchivo = `Reporte_${nombre.replace(/\s+/g, '_')}.xlsx`;
+    XLSX.writeFile(wb, nombreArchivo);
 }
