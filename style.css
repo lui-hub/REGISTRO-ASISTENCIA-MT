@@ -759,3 +759,123 @@ tr:hover .btn-view-history {
         padding: 10px;
     }
 }
+
+/* =========================================
+   13. ESTILOS PARA LIBRETAS Y BIMESTRES
+   ========================================= */
+
+/* Contenedor de opciones de exportación en el modal */
+.export-options-box {
+    background: #ffffff;
+    border: 2px dashed #e2e8f0;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.export-options-box h3 {
+    font-size: 0.85rem;
+    color: var(--secondary);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Fila de control para elegir bimestre y exportar */
+.bimestre-control-row {
+    display: flex;
+    gap: 10px;
+}
+
+.select-bimestre-premium {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #edf2f7;
+    background-color: #f8fafc;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text);
+    outline: none;
+    transition: 0.3s;
+}
+
+.select-bimestre-premium:focus {
+    border-color: var(--secondary);
+    background-color: white;
+}
+
+/* Botón de Excel para Ficha Individual */
+.btn-export-individual {
+    background: #107c41; /* Verde Excel oficial */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-export-individual:hover {
+    background: #0b592e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 124, 65, 0.3);
+}
+
+/* Ajuste para el contador de registros en el historial */
+#h-total-dias {
+    font-size: 0.8rem;
+    background: #edf2f7;
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: var(--secondary);
+    font-weight: 700;
+}
+
+/* =========================================
+   14. REFINAMIENTO VISUAL DEL MODAL
+   ========================================= */
+
+#h-nombre-estudiante {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a202c;
+    margin-bottom: 5px;
+    display: block;
+}
+
+#h-grado-label {
+    font-size: 0.75rem;
+    color: var(--secondary);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Espaciado para los items del historial */
+#lista-historial-detalle {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Estilo para cuando no hay datos */
+.no-data-msg {
+    text-align: center;
+    padding: 40px 20px;
+    color: #a0aec0;
+}
+
+.no-data-msg i {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
