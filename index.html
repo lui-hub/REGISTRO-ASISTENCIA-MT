@@ -37,7 +37,7 @@
 
         <header class="main-header">
             <div class="header-brand">
-                <img src="INSIGNIA.jpg" alt="Logo" class="logo-img">
+                <img src="INSIGNIA.jpeg" alt="Logo" class="logo-img">
                 <div class="brand-text">
                     <h1>Mis Talentos</h1>
                     <span>Registro Oficial 2026</span>
@@ -64,12 +64,25 @@
                 <div class="input-group">
                     <input type="date" id="fechaAsistencia" onchange="cargarTablaAsistencia()">
                 </div>
+                <div class="input-group bimestre-group">
+                    <select id="selectBimestreExport" style="border-color: #E31B2B; font-weight: bold; color: #E31B2B;">
+                        <option value="1">I BIMESTRE</option>
+                        <option value="2">II BIMESTRE</option>
+                        <option value="3">III BIMESTRE</option>
+                        <option value="4">IV BIMESTRE</option>
+                    </select>
+                </div>
             </div>
 
             <div class="action-row">
                 <button onclick="guardarAsistencia()" class="btn btn-save"><i class="fas fa-save"></i> Guardar</button>
                 <button onclick="marcarTodosPresentes()" class="btn btn-fast"><i class="fas fa-check-double"></i> Todo P</button>
                 <button onclick="exportarExcelDiario()" class="btn btn-export"><i class="fas fa-file-excel"></i> Diario</button>
+                
+                <button onclick="exportarReporteBimestral(document.getElementById('selectBimestreExport').value)" class="btn btn-monthly" style="background-color: #E31B2B;">
+                    <i class="fas fa-file-download"></i> Registro Bimestral
+                </button>
+
                 <button onclick="exportarReporteMensual()" class="btn btn-monthly"><i class="fas fa-calendar-alt"></i> Reporte Mes</button>
                 <button onclick="abrirModalAlumnos()" class="btn btn-config"><i class="fas fa-users-cog"></i> Alumnos</button>
             </div>
@@ -149,49 +162,64 @@
     </div>
 
     <div id="modalHistorial" class="modal">
-    <div class="admin-premium" style="max-width: 500px; border-top: 5px solid #3b82f6;">
-        
-        <div class="modal-header-pro">
-            <div class="header-main-info">
-                <div>
-                    <span id="h-grado-label">HISTORIAL ANUAL</span>
-                    <h2 id="h-nombre-estudiante">
-                        <i class="fas fa-user-graduate"></i> Nombre del Alumno
-                    </h2>
+        <div class="admin-premium" style="max-width: 500px; border-top: 5px solid #3b82f6;">
+            
+            <div class="modal-header-pro">
+                <div class="header-main-info">
+                    <div>
+                        <span id="h-grado-label" style="color: #3b82f6; font-weight: bold;">FICHA PARA LIBRETA</span>
+                        <h2 id="h-nombre-estudiante">
+                            <i class="fas fa-user-graduate"></i> Nombre del Alumno
+                        </h2>
+                    </div>
+                </div>
+                <button onclick="cerrarModalHistorial()" class="btn-close-x" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748b;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body-pro">
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px dashed #3b82f6;">
+                    <label style="font-size: 0.8rem; font-weight: bold; color: #475569; display: block; margin-bottom: 5px;">GENERAR REPORTE BIMESTRAL:</label>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="selectBimestreIndividual" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: 'Poppins';">
+                            <option value="1">I BIMESTRE</option>
+                            <option value="2">II BIMESTRE</option>
+                            <option value="3">III BIMESTRE</option>
+                            <option value="4">IV BIMESTRE</option>
+                        </select>
+                        <button onclick="generarFichaLibreta()" class="btn-save" style="background: #3b82f6; color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; height: 40px;">
+                            <i class="fas fa-file-invoice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-dashboard">
+                    <div class="stat-card p"><span class="stat-val" id="h-count-p">0</span><span class="stat-label">P</span></div>
+                    <div class="stat-card t"><span class="stat-val" id="h-count-t">0</span><span class="stat-label">T</span></div>
+                    <div class="stat-card a"><span class="stat-val" id="h-count-a">0</span><span class="stat-label">A</span></div>
+                    <div class="stat-card j"><span class="stat-val" id="h-count-j">0</span><span class="stat-label">J</span></div>
+                </div>
+
+                <div class="list-container-ui">
+                    <div class="list-header-ui">
+                        <span>DETALLE RECIENTE</span>
+                        <span class="badge-count" id="h-total-dias">0 días</span>
+                    </div>
+                    <div id="lista-historial-detalle" style="max-height: 150px; overflow-y: auto;"></div>
                 </div>
             </div>
-            <button onclick="cerrarModalHistorial()" class="btn-close-x" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:#64748b;">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
 
-        <div class="modal-body-pro">
-            <div class="stats-dashboard">
-                <div class="stat-card p"><span class="stat-val" id="h-count-p">0</span><span class="stat-label">P</span></div>
-                <div class="stat-card t"><span class="stat-val" id="h-count-t">0</span><span class="stat-label">T</span></div>
-                <div class="stat-card a"><span class="stat-val" id="h-count-a">0</span><span class="stat-label">A</span></div>
-                <div class="stat-card j"><span class="stat-val" id="h-count-j">0</span><span class="stat-label">J</span></div>
+            <div class="modal-footer-tablet">
+                <button onclick="exportarHistorialAlumno()" class="btn btn-excel-premium">
+                    <i class="fas fa-file-excel"></i> ANUAL
+                </button>
+                <button onclick="cerrarModalHistorial()" class="btn btn-monthly">
+                    CERRAR
+                </button>
             </div>
-
-            <div class="list-container-ui">
-                <div class="list-header-ui">
-                    <span>DETALLE DE ASISTENCIAS</span>
-                    <span class="badge-count" id="h-total-dias">0 días</span>
-                </div>
-                <div id="lista-historial-detalle"></div>
-            </div>
-        </div>
-
-        <div class="modal-footer-tablet">
-            <button onclick="exportarHistorialAlumno()" class="btn btn-excel-premium">
-                <i class="fas fa-file-excel"></i> EXCEL
-            </button>
-            <button onclick="cerrarModalHistorial()" class="btn btn-monthly">
-                CERRAR
-            </button>
         </div>
     </div>
-</div>
     
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
