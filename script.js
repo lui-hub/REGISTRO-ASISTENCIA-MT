@@ -21,6 +21,13 @@ const estructuraColegio = {
     "SECUNDARIA": ["1º Secundaria", "2º Secundaria", "3º Secundaria", "4º Secundaria", "5º Secundaria"]
 };
 
+const CALENDARIZACION_2026 = {
+    1: { inicio: '2026-03-09', fin: '2026-05-15', nombre: "I BIMESTRE", unidades: "I y II Unidad" },
+    2: { inicio: '2026-05-25', fin: '2026-07-24', nombre: "II BIMESTRE", unidades: "III y IV Unidad" },
+    3: { inicio: '2026-08-10', fin: '2026-10-09', nombre: "III BIMESTRE", unidades: "V y VI Unidad" },
+    4: { inicio: '2026-10-19', fin: '2026-12-18', nombre: "IV BIMESTRE", unidades: "VII y VIII Unidad" }
+};
+
 let alumnosData = {};
 let tutoresData = {};
 
@@ -221,6 +228,132 @@ function guardarAsistencia() {
 /* =========================================
    4. EXPORTACIÓN A EXCEL (XLSX)
    ========================================= */
+   async function generarFichaLibreta() {
+    const nombreE = document.getElementById('h-nombre-estudiante').innerText.trim().toUpperCase().replace('NOMBRE DEL ALUMNO', '').replace(' ','');
+    const nroBim = document.getElementById('selectBimestreIndividual').value;
+    const config = CALENDARIZACION_2026[nroBim];
+    
+    const n = document.getElementById('selectNivel').value;
+    const g = document.getElementById('selectGrado').value;
+    const key = `${n}_${g}`.replace(/ /g, "_");
+    const tutorActual = tutoresData[key] || "POR ASIGNAR";
+
+    const snap = await db.ref(`asistencias/${key}`).once('value');
+    const data = snap.val() || {};
+
+    const fechasBimestre = Object.keys(data)
+        .filter(f => f >= config.inicio && f <= config.fin)
+        .sort();
+
+    if (fechasBimestre.length === 0) return alert("❌ No hay registros para este alumno en el periodo seleccionado.");
+
+    let rows = [];
+    let stats = {P:0, T:0, A:0, J:0};
+    const nombreBusqueda = document.getElementById('h-nombre-estudiante').innerText.replace('person', '').trim().toUpperCase();
+
+    fechasBimestre.forEach(fecha => {
+        const regDia = data[fecha].find(x => x.alumno.trim().toUpperCase() === nombreBusqueda);
+        if(regDia && regDia.estado !== "S/R") {
+            const est = regDia.estado.toUpperCase();
+            if(stats[est] !== undefined) stats[est]++;
+            rows.push([fecha.split('-').reverse().join('/'), est, regDia.nota || ""]);
+        }
+    });
+
+    const header = [
+        ["I.E.P. MIS TALENTOS - REPORTE DE ASISTENCIA"],
+        ["ESTUDIANTE:", nombreBusqueda],
+        ["GRADO:", g],
+        ["TUTOR:", tutorActual],
+        ["BIMESTRE:", config.nombre],
+        [""],
+        ["FECHA", "ESTADO", "OBSERVACIÓN"]
+    ];
+
+    const footer = [
+        [""],
+        ["RESUMEN DEL BIMESTRE"],
+        ["PRESENTE (P)", stats.P],
+        ["TARDANZA (T)", stats.T],
+        ["FALTA (A)", stats.A],
+        ["JUSTIFICADO (J)", stats.J]
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet([...header, ...rows, ...footer]);
+    const wb = XLSX.utils.book_new();
+    ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 40 }];
+    XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+    XLSX.writeFile(wb, `Asistencia_${config.nombre}_${nombreBusqueda}.xlsx`);
+}
+
+   async function exportarReporteBimestral(nroBimestre) {
+    const n = document.getElementById('selectNivel').value;
+    const g = document.getElementById('selectGrado').value;
+    if (!g) return alert("⚠️ Seleccione Nivel y Grado para exportar el bimestre.");
+
+    const config = CALENDARIZACION_2026[nroBimestre];
+    const key = `${n}_${g}`.replace(/ /g, "_");
+    const tutorActual = tutoresData[key] || "POR ASIGNAR";
+
+    const snapshot = await db.ref(`asistencias/${key}`).once('value');
+    const asistenciasTotales = snapshot.val() || {};
+
+    // 1. Filtrar las fechas que existen en la DB y que están en el rango del bimestre
+    const fechasBimestre = Object.keys(asistenciasTotales)
+        .filter(f => f >= config.inicio && f <= config.fin)
+        .sort();
+
+    if (fechasBimestre.length === 0) return alert(`❌ No hay asistencias guardadas para el ${config.nombre}.`);
+
+    // 2. Encabezado del reporte
+    const filaFechas = ["N°", "APELLIDOS Y NOMBRES", ...fechasBimestre.map(f => f.split('-').reverse().slice(0,2).join('/')), "P", "T", "A", "J", "% ASIST."];
+    
+    const encabezadoHoja = [
+        ["I.E.P. MIS TALENTOS - REPORTE DE ASISTENCIA POR BIMESTRE"],
+        [`PERIODO: ${config.nombre} (${config.unidades})`, `NIVEL: ${n}`, `GRADO: ${g}`],
+        [`TUTOR(A): ${tutorActual}`, "", "", `GENERADO: ${new Date().toLocaleDateString()}`],
+        [""]
+    ];
+
+    // 3. Procesamiento individual por cada niño
+    const alumnos = (alumnosData[key] || []).sort();
+    const cuerpoReporte = alumnos.map((nom, idx) => {
+        let stats = { P: 0, T: 0, A: 0, J: 0 };
+        const nombreU = nom.trim().toUpperCase();
+
+        const marcasDelBimestre = fechasBimestre.map(fecha => {
+            const dataDia = asistenciasTotales[fecha];
+            const registro = dataDia ? dataDia.find(x => x.alumno.trim().toUpperCase() === nombreU) : null;
+            
+            if (registro && registro.estado !== "S/R") {
+                const est = registro.estado.toUpperCase();
+                if (stats[est] !== undefined) stats[est]++;
+                return est;
+            }
+            return "-"; // Día no registrado o sin clase
+        });
+
+        const totalLectivos = stats.P + stats.T + stats.A + stats.J;
+        const porcentaje = totalLectivos > 0 ? (((stats.P + stats.T) / totalLectivos) * 100).toFixed(0) + "%" : "0%";
+
+        return [idx + 1, nombreU, ...marcasDelBimestre, stats.P, stats.T, stats.A, stats.J, porcentaje];
+    });
+
+    // 4. Construcción del Excel
+    const ws = XLSX.utils.aoa_to_sheet([...encabezadoHoja, filaFechas, ...cuerpoReporte]);
+    const wb = XLSX.utils.book_new();
+
+    // Estilo de columnas: N° (5), Nombres (40), Fechas (4 c/u), Totales (5 c/u)
+    ws['!cols'] = [
+        { wch: 5 }, { wch: 40 }, 
+        ...fechasBimestre.map(() => ({ wch: 4 })), 
+        { wch: 5 }, { wch: 5 }, { wch: 5 }, { wch: 5 }, { wch: 10 }
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, "Libreta Asistencia");
+    XLSX.writeFile(wb, `Reporte_${config.nombre.replace(" ","_")}_${g.replace(/ /g, "_")}.xlsx`);
+}
+
 function exportarExcelDiario() {
     const n = document.getElementById('selectNivel').value;
     const g = document.getElementById('selectGrado').value;
