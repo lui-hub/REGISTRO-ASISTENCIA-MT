@@ -1,881 +1,719 @@
 /* =========================================
-   1. VARIABLES Y CONFIGURACIÓN PREMIUM
+   1. VARIABLES Y CONFIGURACIÓN
    ========================================= */
 :root {
-    --primary: #E31B2B;    /* Rojo Colegio */
-    --secondary: #4F85C7;  /* Azul Institucional */
-    --accent: #FFD700;     /* Dorado de Éxito */
-    --presente: #2ecc71;   /* Esmeralda */
-    --tardanza: #f1c40f;   /* Ámbar */
-    --justificado: #3498db;/* Peter River */
-    --bg: #f8fafc;         /* Gris azulado muy claro */
-    --text: #2d3436;       /* Gris oscuro profesional */
-    --border-radius: 16px;
-    --card-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    --premium-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    --primary:      #E31B2B;
+    --primary-dark: #b5121f;
+    --secondary:    #4F85C7;
+    --secondary-dark: #3a68a1;
+    --accent:       #FFD700;
+    --presente:     #2ecc71;
+    --tardanza:     #f1c40f;
+    --ausente:      #e74c3c;
+    --justificado:  #3498db;
+    --bg:           #f0f4f8;
+    --surface:      #ffffff;
+    --text:         #1e293b;
+    --text-muted:   #64748b;
+    --border:       #e2e8f0;
+    --radius:       16px;
+    --radius-sm:    10px;
+    --shadow-sm:    0 2px 8px rgba(0,0,0,0.06);
+    --shadow-md:    0 8px 24px rgba(0,0,0,0.09);
+    --shadow-lg:    0 20px 40px rgba(0,0,0,0.13);
 }
 
-* { 
-    box-sizing: border-box; 
-    margin: 0; padding: 0; 
-    -webkit-tap-highlight-color: transparent; 
-}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-body { 
-    font-family: 'Poppins', sans-serif; 
-    background-color: var(--bg); 
-    color: var(--text); 
-    overflow-x: hidden; 
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
     line-height: 1.6;
 }
 
-.app-container { 
-    max-width: 900px; 
-    margin: auto; 
-    padding: 15px; 
+.app-container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 /* =========================================
-   2. DASHBOARD DE ESTADÍSTICAS (Premium Cards)
+   2. STATS DASHBOARD
    ========================================= */
-.stats-dashboard { 
-    display: grid; 
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 12px; 
-    margin-bottom: 20px; 
+.stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
 }
 
-.stat-card { 
-    background: white; 
-    padding: 15px 5px; 
-    border-radius: var(--border-radius); 
-    text-align: center; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
-    border: 1px solid rgba(0,0,0,0.02);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.stat-card {
+    background: var(--surface);
+    padding: 14px 8px;
+    border-radius: var(--radius);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 
-.stat-card:hover { 
-    transform: translateY(-5px); 
-    box-shadow: var(--card-shadow);
+.stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+.stat-icon {
+    font-size: 1rem;
+    opacity: 0.45;
+    margin-bottom: 2px;
 }
 
-.stat-val { 
-    font-size: 1.3rem; 
-    font-weight: 800; 
-    display: block; 
-    line-height: 1.2;
+.stat-card.p .stat-icon { color: var(--presente); opacity: 0.7; }
+.stat-card.t .stat-icon { color: var(--tardanza); opacity: 0.7; }
+.stat-card.a .stat-icon { color: var(--ausente);   opacity: 0.7; }
+.stat-card.j .stat-icon { color: var(--justificado); opacity: 0.7; }
+
+.stat-val {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1;
+    display: block;
 }
 
-.stat-label { 
-    font-size: 0.65rem; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px;
-    color: #a0aec0; 
+.stat-label {
+    font-size: 0.6rem;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
 }
 
 .stat-card.p .stat-val { color: var(--presente); }
 .stat-card.t .stat-val { color: var(--tardanza); }
-.stat-card.a .stat-val { color: var(--primary); }
-.stat-card.j .stat-val { color: var(--secondary); }
+.stat-card.a .stat-val { color: var(--ausente); }
+.stat-card.j .stat-val { color: var(--justificado); }
 
 /* =========================================
-   3. CABECERA PRINCIPAL (LOGO Y RELOJ)
+   3. CABECERA
    ========================================= */
-.main-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    background: white; 
-    padding: 15px 25px; 
-    border-radius: var(--border-radius); 
-    margin-bottom: 15px; 
-    box-shadow: var(--card-shadow);
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+    padding: 14px 22px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
 }
 
-.header-brand { display: flex; align-items: center; gap: 15px; }
-.logo-img { height: 55px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-.brand-text h1 { font-size: 1.3rem; color: var(--primary); font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
-.brand-text span { font-size: 0.8rem; color: #718096; font-weight: 500; }
+.header-brand { display: flex; align-items: center; gap: 14px; }
+.logo-img { height: 52px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12)); }
+.brand-text h1 { font-size: 1.25rem; color: var(--primary); font-weight: 800; line-height: 1; letter-spacing: -0.3px; }
+.brand-text span { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-#reloj { 
-    font-weight: 800; 
-    color: var(--secondary); 
-    background: #edf2f7; 
-    padding: 10px 20px; 
-    border-radius: 12px; 
-    font-size: 0.95rem; 
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+#reloj {
+    font-weight: 700;
+    color: var(--secondary);
+    background: #eef4fc;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    border: 1px solid rgba(79,133,199,0.15);
 }
 
 /* =========================================
-   4. PANEL DE CONTROL (GLAS MORPHISM)
+   4. PANEL DE CONTROL (REDISEÑADO)
    ========================================= */
-.control-panel { 
-    background: linear-gradient(135deg, var(--secondary) 0%, #3a68a1 100%);
-    padding: 25px; 
-    border-radius: 24px; 
-    margin-bottom: 15px; 
-    box-shadow: 0 10px 25px rgba(79, 133, 199, 0.3);
-    border: 1px solid rgba(255,255,255,0.1);
+.control-panel {
+    background: linear-gradient(145deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+    padding: 20px;
+    border-radius: 22px;
+    box-shadow: 0 10px 28px rgba(79,133,199,0.28);
 }
 
-.filter-row { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr 1fr; 
-    gap: 12px; 
-    margin-bottom: 15px; 
+.panel-section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.input-group { 
-    background: rgba(255,255,255,0.15); 
+.panel-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    margin: 14px 0;
+}
+
+/* ZONA FILTROS */
+.filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.input-group {
+    background: rgba(255,255,255,0.13);
     backdrop-filter: blur(10px);
-    padding: 12px 18px; 
-    border-radius: 14px; 
-    border: 1px solid rgba(255,255,255,0.2); 
-    transition: 0.3s;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.25s;
 }
 
-.input-group:focus-within { background: rgba(255,255,255,0.25); border-color: white; }
+.input-group:focus-within {
+    background: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.5);
+}
 
-.input-group select, .input-group input { 
-    background: transparent; 
-    border: none; 
-    color: white; 
-    width: 100%; 
-    outline: none; 
-    font-size: 0.9rem; 
+.input-icon { color: rgba(255,255,255,0.6); font-size: 0.85rem; flex-shrink: 0; }
+
+.input-group select,
+.input-group input {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+    font-size: 0.88rem;
     font-weight: 600;
+    font-family: 'Poppins', sans-serif;
 }
 
-.input-group select option { color: #333; }
+.input-group select option { color: #1e293b; background: white; }
+.input-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.7; cursor: pointer; }
 
-.action-row { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 12px; 
+/* ZONA ACCIONES */
+.action-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
 }
 
-.btn { 
-    flex: 1 1 20%; 
-    min-width: 100px;
-    border: none; 
-    padding: 15px 10px; 
-    border-radius: 14px; 
-    cursor: pointer; 
-    font-weight: 700; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 8px; 
-    font-size: 0.8rem; 
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+/* ZONA EXPORTAR */
+.export-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 10px;
+    align-items: center;
 }
 
-.btn-save { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(227, 27, 43, 0.3); }
-.btn-fast { background: #8e44ad; color: white; box-shadow: 0 4px 12px rgba(142, 68, 173, 0.3); }
-.btn-export { background: var(--accent); color: #2d3436; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); }
-.btn-monthly { background: #2d3436; color: white; }
-.btn-config { background: #f7fafc; color: #4a5568; }
+.bimestre-export-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
 
-.btn:hover { transform: scale(1.05); }
-.btn:active { transform: scale(0.95); }
+.select-bimestre {
+    flex: 1;
+    padding: 13px 10px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    outline: none;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.select-bimestre option { color: #1e293b; background: white; }
+
+/* BOTONES GENERALES */
+.btn {
+    border: none;
+    padding: 13px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 0.8rem;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%;
+}
+
+.btn span { white-space: nowrap; }
+.btn:hover  { transform: translateY(-2px); filter: brightness(1.08); }
+.btn:active { transform: scale(0.96); }
+
+.btn-save     { background: var(--primary);   color: white; box-shadow: 0 4px 12px rgba(227,27,43,0.35); }
+.btn-fast     { background: #8e44ad;           color: white; box-shadow: 0 4px 12px rgba(142,68,173,0.3); }
+.btn-config   { background: rgba(255,255,255,0.95); color: #3a68a1; font-weight: 800; }
+.btn-export   { background: var(--accent);    color: #1e293b; box-shadow: 0 4px 12px rgba(255,215,0,0.3); }
+.btn-monthly  { background: #2d3436;           color: white; }
+.btn-bimestral { background: var(--primary);  color: white; box-shadow: 0 4px 12px rgba(227,27,43,0.35); flex: 1; }
+
+.btn:disabled {
+    background: #a0aec0 !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.65;
+}
 
 /* =========================================
-   5. VISOR DE INFO (CANTIDAD Y TUTOR)
+   5. INFO TUTOR
    ========================================= */
 .info-resumen-grado {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
-    padding: 15px 20px;
-    border-radius: var(--border-radius);
-    margin-bottom: 15px;
-    border-left: 6px solid var(--secondary);
-    box-shadow: var(--card-shadow);
+    background: var(--surface);
+    padding: 13px 18px;
+    border-radius: var(--radius);
+    border-left: 5px solid var(--secondary);
+    box-shadow: var(--shadow-sm);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
 }
 
-#infoTutorCabecera { font-weight: 700; color: #2d3748; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+#infoTutorCabecera { font-weight: 700; color: #2d3748; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; }
 #infoTutorCabecera i { color: var(--secondary); }
 
-.badge-estudiantes { 
-    background: #ebf4ff; 
-    color: var(--secondary); 
-    padding: 6px 18px; 
-    border-radius: 30px; 
-    font-size: 0.85rem;
-    font-weight: 800;
-    border: 1px solid rgba(79, 133, 199, 0.1);
+.badge-estudiantes {
+    background: #eef4fc;
+    color: var(--secondary);
+    padding: 5px 16px;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: 1px solid rgba(79,133,199,0.15);
 }
 
 /* =========================================
-   6. TABLA DE ASISTENCIA (ESTILO APP)
+   6. TABLA DE ASISTENCIA
    ========================================= */
-.content-card { 
-    background-color: white; 
-    border-radius: 24px; 
-    padding: 15px; 
-    box-shadow: var(--card-shadow); 
+.content-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
 }
 
 .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-th { 
-    padding: 15px; 
-    border-bottom: 2px solid #edf2f7; 
-    color: var(--secondary); 
-    font-size: 0.85rem; 
-    text-align: left; 
+
+table { width: 100%; border-collapse: collapse; min-width: 480px; }
+
+th {
+    padding: 13px 12px;
+    border-bottom: 2px solid var(--border);
+    color: var(--secondary);
+    font-size: 0.78rem;
+    text-align: left;
     text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 700;
 }
 
-td { padding: 18px 10px; border-bottom: 1px solid #f1f5f9; }
+td { padding: 16px 10px; border-bottom: 1px solid #f1f5f9; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafcff; }
 
-.nom-est b { font-size: 0.95rem; color: #1a202c; letter-spacing: -0.2px; }
+.nom-est b { font-size: 0.92rem; color: #1a202c; letter-spacing: -0.2px; }
 
-.attendance-btns { display: flex; gap: 8px; margin-bottom: 8px; }
+/* Estado vacío */
+.empty-state-row td { padding: 0; border: none; }
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+    color: #a0aec0;
+    gap: 12px;
+}
+
+.empty-state i { font-size: 2.8rem; animation: bounce 2s infinite; }
+.empty-state p { font-size: 0.9rem; font-weight: 600; text-align: center; }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Botones de asistencia */
+.attendance-btns { display: flex; gap: 7px; margin-bottom: 6px; }
 .btn-check { display: none; }
 
-.btn-label { 
-    width: 42px; height: 42px; 
-    border-radius: 12px; 
-    border: 2px solid #edf2f7; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-weight: 800; 
-    cursor: pointer; 
-    color: #cbd5e0; 
-    font-size: 0.95rem; 
-    transition: all 0.2s ease;
+.btn-label {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    cursor: pointer;
+    color: #cbd5e0;
+    font-size: 0.88rem;
+    transition: all 0.18s ease;
+    user-select: none;
 }
 
-/* Colores dinámicos al marcar la asistencia */
-.btn-check[value="P"]:checked + .btn-label { 
-    background-color: var(--presente); 
-    color: white; 
-    border-color: transparent; 
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+.btn-check[value="P"]:checked + .btn-label {
+    background: var(--presente); color: white; border-color: transparent;
+    transform: scale(1.12); box-shadow: 0 4px 10px rgba(46,204,113,0.35);
+}
+.btn-check[value="T"]:checked + .btn-label {
+    background: var(--tardanza); color: white; border-color: transparent;
+    transform: scale(1.12); box-shadow: 0 4px 10px rgba(241,196,15,0.35);
+}
+.btn-check[value="A"]:checked + .btn-label {
+    background: var(--ausente); color: white; border-color: transparent;
+    transform: scale(1.12); box-shadow: 0 4px 10px rgba(231,76,60,0.35);
+}
+.btn-check[value="J"]:checked + .btn-label {
+    background: var(--justificado); color: white; border-color: transparent;
+    transform: scale(1.12); box-shadow: 0 4px 10px rgba(52,152,219,0.35);
 }
 
-.btn-check[value="T"]:checked + .btn-label { 
-    background-color: var(--tardanza); 
-    color: white; 
-    border-color: transparent; 
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3);
-}
-
-.btn-check[value="A"]:checked + .btn-label { 
-    background-color: var(--primary); 
-    color: white; 
-    border-color: transparent; 
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(227, 27, 43, 0.3);
-}
-
-.btn-check[value="J"]:checked + .btn-label { 
-    background-color: var(--justificado); 
-    color: white; 
-    border-color: transparent; 
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
-}
-
-.obs-input { 
-    width: 100%; 
-    max-width: 200px; 
-    padding: 8px 12px; 
-    border-radius: 10px; 
-    border: 1px solid #edf2f7; 
-    font-size: 0.8rem; 
-    outline: none; 
-    background-color: #f8fafc; 
+.obs-input {
+    width: 100%; max-width: 190px;
+    padding: 7px 11px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    font-size: 0.78rem;
+    outline: none;
+    background: #f8fafc;
+    font-family: 'Poppins', sans-serif;
     transition: 0.2s;
+    color: var(--text);
 }
+.obs-input:focus { border-color: var(--secondary); background: white; }
 
-.obs-input:focus { border-color: var(--secondary); background-color: white; }
+.action-container { display: flex; align-items: center; gap: 10px; }
+
+.btn-view-history {
+    background: #eef4fc;
+    color: var(--secondary);
+    border: 1px solid rgba(79,133,199,0.2);
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+}
+.btn-view-history:hover {
+    background: var(--secondary); color: white;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 5px 14px rgba(79,133,199,0.3);
+    border-color: transparent;
+}
+tr:hover .btn-view-history { border-color: var(--secondary); }
 
 /* =========================================
-   7. MODAL DE GESTIÓN AVANZADA
+   7. MODALES
    ========================================= */
-.modal { 
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0; top: 0; 
-    width: 100%; height: 100%; 
-    background-color: rgba(15, 23, 42, 0.8); 
-    backdrop-filter: blur(8px); 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(15,23,42,0.75);
+    backdrop-filter: blur(6px);
 }
 
-.admin-premium { 
-    background-color: white; 
-    margin: 5% auto; 
-    width: 95%; 
-    max-width: 500px; 
-    border-radius: 28px; 
-    overflow: hidden; 
-    box-shadow: var(--premium-shadow);
-    border-top: 8px solid var(--primary);
-    animation: slideIn 0.4s ease-out;
+.admin-premium {
+    background: var(--surface);
+    margin: 5% auto;
+    width: 95%; max-width: 500px;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border-top: 7px solid var(--primary);
+    animation: slideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes slideIn {
-    from { transform: translateY(30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { transform: translateY(28px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
 }
 
+.modal-historial { border-top-color: var(--secondary); }
+
 .modal-header-pro {
-    background-color: white;
-    padding: 25px 25px 15px;
+    background: var(--surface);
+    padding: 22px 22px 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border);
 }
 
-.header-main-info h2 { font-size: 1.2rem; color: #1e293b; display: flex; align-items: center; gap: 10px; }
-.header-main-info h2 i { color: var(--secondary); }
-.header-main-info span { color: var(--secondary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+.modal-header-icon { font-size: 1.8rem; color: var(--primary); margin-right: 12px; }
 
-.modal-body-pro { padding: 25px; background-color: #fafbfc; }
+.header-main-info { display: flex; align-items: center; }
+.header-main-info h2 { font-size: 1.1rem; color: #1e293b; font-weight: 800; }
+.header-main-info span { color: var(--secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; }
 
-/* Cajas de entrada avanzadas con botón integrado */
-.tutor-box-ui, .add-student-ui { margin-bottom: 20px; }
+.historial-grado-label { color: var(--secondary); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 3px; }
+
+.btn-close-x {
+    background: #f1f5f9; border: none; color: #64748b;
+    width: 34px; height: 34px; border-radius: 9px;
+    cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+.btn-close-x:hover { background: var(--primary); color: white; }
+
+.modal-body-pro { padding: 22px; background: #fafbfc; }
+
+/* Tutor box */
+.tutor-box-ui, .add-student-ui { margin-bottom: 16px; }
 .tutor-box-ui label, .add-student-ui label {
-    display: block; font-size: 0.75rem; font-weight: 700;
-    color: var(--secondary); margin-bottom: 8px; text-transform: uppercase;
+    display: block; font-size: 0.72rem; font-weight: 700;
+    color: var(--secondary); margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px;
 }
 
 .input-action-group { display: flex; gap: 8px; }
 .input-action-group input {
-    flex: 1; padding: 12px 18px; border-radius: 12px;
-    border: 2px solid #eef2f7; outline: none; transition: 0.3s;
+    flex: 1; padding: 11px 15px; border-radius: 11px;
+    border: 2px solid var(--border); outline: none;
+    font-family: 'Poppins', sans-serif; font-size: 0.88rem;
+    color: var(--text); transition: 0.25s;
 }
-
-.input-action-group input:focus { border-color: var(--secondary); background-color: white; }
+.input-action-group input:focus { border-color: var(--secondary); background: white; }
 
 .btn-action-save, .btn-action-add {
-    width: 50px; border: none; border-radius: 12px; color: white; cursor: pointer; transition: 0.3s;
+    width: 46px; border: none; border-radius: 11px;
+    color: white; cursor: pointer; transition: 0.25s; font-size: 1rem;
 }
-.btn-action-save { background-color: var(--presente); }
-.btn-action-add { background-color: var(--secondary); }
+.btn-action-save { background: var(--presente); }
+.btn-action-add  { background: var(--secondary); }
+.btn-action-save:hover, .btn-action-add:hover { filter: brightness(1.1); transform: scale(1.05); }
+
+/* Quick actions */
+.admin-quick-actions { display: flex; gap: 8px; margin-bottom: 16px; }
 
 .btn-import-ui {
-    width: 100%; padding: 12px; background-color: #2d3748; color: white;
-    border: none; border-radius: 12px; font-size: 0.8rem; font-weight: 600;
-    margin-bottom: 20px; cursor: pointer;
+    flex: 1; padding: 11px;
+    background: #2d3748; color: white;
+    border: none; border-radius: 11px;
+    font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; font-family: 'Poppins', sans-serif;
+    transition: 0.25s; display: flex; align-items: center; justify-content: center; gap: 6px;
 }
+.btn-import-ui:hover { background: #1a202c; }
+.btn-import-secondary { background: #4a5568; }
+.btn-import-secondary:hover { background: #2d3748; }
 
-/* Lista de alumnos estilizada */
-.list-container-ui { 
-    border: 1px solid #eef2f7; 
-    border-radius: 20px; 
+/* Lista alumnos */
+.list-container-ui {
+    border: 1px solid var(--border);
+    border-radius: 18px;
     overflow: hidden;
-    background-color: white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
 }
 
 .list-header-ui {
-    background-color: #f8f9fa; padding: 12px 20px;
+    background: #f8f9fa; padding: 11px 18px;
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 0.8rem; font-weight: 700; color: #666;
+    font-size: 0.75rem; font-weight: 700; color: #555;
+    border-bottom: 1px solid var(--border);
 }
 
-.badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; }
+.badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.68rem; }
 
-.styled-list {
-    list-style: none;
-    max-height: 250px;
-    overflow-y: auto;
-}
+.styled-list { list-style: none; max-height: 240px; overflow-y: auto; }
 
 .admin-item-pro {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 20px; border-bottom: 1px solid #f9f9f9;
+    padding: 11px 18px; border-bottom: 1px solid #f5f5f5; transition: 0.15s;
 }
+.admin-item-pro:hover { background: #fafcff; }
+.admin-item-pro:last-child { border-bottom: none; }
+.admin-item-pro span { font-size: 0.83rem; color: #4a5568; font-weight: 500; }
 
-.admin-item-pro:hover { background-color: #fdfdfd; }
-.admin-item-pro span { font-size: 0.85rem; color: #4a5568; font-weight: 500; }
+.admin-btns { display: flex; gap: 7px; }
 
-.btn-delete-ui {
-    background: #feebeb; color: var(--primary);
-    border: none; padding: 6px 12px; border-radius: 8px;
-    font-weight: 700; font-size: 0.7rem; cursor: pointer;
+.btn-edit-ui, .btn-delete-ui {
+    padding: 6px 11px; border-radius: 9px; font-weight: 700;
+    font-size: 0.72rem; cursor: pointer; transition: all 0.25s ease;
+    display: flex; align-items: center; justify-content: center;
 }
+.btn-edit-ui   { background: #fff3e0; color: #f39c12; border: 1px solid rgba(243,156,18,0.2); }
+.btn-delete-ui { background: #feebeb; color: var(--primary); border: 1px solid rgba(227,27,43,0.1); }
+.btn-edit-ui:hover   { background: #f39c12; color: white; box-shadow: 0 3px 8px rgba(243,156,18,0.25); transform: translateY(-1px); }
+.btn-delete-ui:hover { background: var(--primary); color: white; box-shadow: 0 3px 8px rgba(227,27,43,0.25); transform: translateY(-1px); }
 
 .btn-finish-ui {
-    width: 100%; padding: 18px; border: none;
+    width: 100%; padding: 16px; border: none;
     background: #1e293b; color: white;
-    font-weight: 800; cursor: pointer;
-    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800; cursor: pointer; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    transition: 0.25s;
 }
+.btn-finish-ui:hover { background: #0f172a; }
 
 /* =========================================
-   7.1 ESTILOS ESPECÍFICOS PARA BOTONES DE ACCIÓN (EDITAR/ELIMINAR)
+   8. MODAL HISTORIAL ESPECÍFICO
    ========================================= */
-.admin-btns {
-    display: flex;
-    gap: 8px; /* Espacio entre los botones de la lista */
-}
+#modalHistorial { z-index: 1100; }
 
-/* Botón Editar - Estilo Ámbar/Naranja */
-.btn-edit-ui {
-    background: #fff3e0; /* Naranja muy claro de fondo */
-    color: #f39c12;    /* Naranja vibrante para el icono */
-    border: 1px solid rgba(243, 156, 18, 0.2);
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-edit-ui:hover {
-    background: #f39c12;
-    color: white;
-    box-shadow: 0 4px 10px rgba(243, 156, 18, 0.25);
-    transform: translateY(-2px);
-}
-
-/* Ajuste al botón Eliminar para que haga juego con el de Editar */
-.btn-delete-ui {
-    background: #feebeb; /* Rojo muy claro de fondo */
-    color: var(--primary);
-    border: 1px solid rgba(227, 27, 43, 0.1);
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-delete-ui:hover {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 4px 10px rgba(227, 27, 43, 0.25);
-    transform: translateY(-2px);
-}
-
-/* Animación sutil al aparecer el modal */
-.admin-premium {
-    /* ... mantén tu código anterior y asegúrate de que tenga esto: */
-    animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* =========================================
-   8. RESPONSIVIDAD ADICIONAL
-   ========================================= */
-@media (max-width: 600px) {
-    .app-container { padding: 10px; }
-    .stats-dashboard { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .stat-card { padding: 8px 3px; }
-    .filter-row { grid-template-columns: 1fr; }
-    .btn-label { width: 36px; height: 36px; font-size: 0.8rem; }
-}
-
-/* =========================================
-   9. MEJORAS DE FEEDBACK Y ANIMACIONES
-   ========================================= */
-
-/* Estado de carga para el botón Guardar */
-.btn:disabled {
-    background-color: #a0aec0 !important;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-    opacity: 0.7;
-}
-
-/* Color específico para el Reporte Mensual (Elegante) */
-.btn-monthly {
-    background: #2d3436; /* Gris carbón premium */
-    color: white;
-    box-shadow: 0 4px 12px rgba(45, 52, 54, 0.3);
-}
-
-.btn-monthly:hover {
-    background: #000000;
-}
-
-/* Animación de Spinner para el icono cuando se guarda */
-.fa-spin {
-    animation: spin-loader 1s linear infinite;
-}
-
-@keyframes spin-loader {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Estilo para el scrollbar de la lista de alumnos (más fino para tablet) */
-.styled-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.styled-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.styled-list::-webkit-scrollbar-thumb {
-    background: #cbd5e0;
-    border-radius: 10px;
-}
-
-/* Efecto visual al presionar botones en pantallas táctiles */
-@media (hover: none) {
-    .btn:active {
-        transform: scale(0.92);
-        filter: brightness(0.8);
-    }
-}
-/* =========================================
-   10. BOTÓN DE HISTORIAL ANUAL (INTEGRACIÓN)
-   ========================================= */
-
-/* Contenedor flexible para alinear botones e icono en la celda */
-.action-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 2px 0;
-}
-
-/* Botón de Historial Estilizado */
-.btn-view-history {
-    background: #f0f7ff; /* Azul muy pálido */
-    color: var(--secondary);
-    border: 1px solid rgba(79, 133, 199, 0.2);
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0; /* Evita que se encoja en pantallas pequeñas */
-}
-
-.btn-view-history:hover {
-    background: var(--secondary);
-    color: white;
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 5px 15px rgba(79, 133, 199, 0.3);
-    border-color: transparent;
-}
-
-/* Ajuste responsivo para el input de notas al lado del botón */
-@media (max-width: 600px) {
-    .action-container {
-        gap: 8px;
-    }
-    
-    .btn-view-history {
-        width: 34px;
-        height: 34px;
-        font-size: 0.95rem;
-    }
-
-    .obs-input {
-        max-width: 120px; /* Se ajusta mejor en celulares */
-    }
-}
-
-/* Efecto visual cuando el mouse está encima de la fila para resaltar el botón */
-tr:hover .btn-view-history {
-    border-color: var(--secondary);
-}
-
-/* =========================================
-   11. MODAL DE HISTORIAL ESPECÍFICO (Premium)
-   ========================================= */
-
-/* Aseguramos que el modal de historial esté por encima de otros elementos */
-#modalHistorial {
-    z-index: 1100;
-}
-
-/* Aplicamos un color de borde superior diferente para diferenciarlo del de Gestión */
 #modalHistorial .admin-premium {
-    border-top: 8px solid var(--secondary);
+    max-height: 88vh;
+    display: flex; flex-direction: column;
+    margin: 4vh auto;
 }
-
-/* Ajuste del dashboard pequeño dentro del modal */
-#modalHistorial .stats-dashboard {
-    grid-template-columns: repeat(4, 1fr); /* 4 columnas para P, T, A, J */
-    gap: 10px;
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 18px;
-    margin-bottom: 20px;
-}
-
-/* Estilo para cada fila de la lista de historial */
-#modalHistorial .admin-item-pro {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px;
-    border-bottom: 1px solid #f1f5f9;
-    background: white;
-    transition: all 0.2s ease;
-}
-
-#modalHistorial .admin-item-pro:hover {
-    background-color: #f0f7ff;
-    transform: translateX(5px);
-}
-
-/* Formato de la fecha y observación dentro de la fila */
-.historial-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.historial-fecha {
-    font-weight: 700;
-    color: var(--text);
-    font-size: 0.9rem;
-}
-
-.historial-obs {
-    font-size: 0.75rem;
-    color: #718096;
-    font-style: italic;
-    margin-top: 2px;
-}
-
-/* Badge circular para el estado en el historial */
-#modalHistorial .btn-label {
-    width: 34px;
-    height: 34px;
-    font-size: 0.8rem;
-    cursor: default; /* No es clicable aquí */
-    border: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* Personalización del scrollbar interno para el historial */
-#lista-historial-detalle::-webkit-scrollbar {
-    width: 5px;
-}
-
-#lista-historial-detalle::-webkit-scrollbar-thumb {
-    background: var(--secondary);
-    border-radius: 10px;
-}
-
-/* Botón cerrar específico del historial */
-.btn-close-historial {
-    background: var(--secondary);
-    color: white;
-    width: 100%;
-    padding: 15px;
-    border: none;
-    font-weight: 800;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-close-historial:hover {
-    filter: brightness(1.1);
-}
-
-/* Responsividad para el modal en móviles */
-@media (max-width: 600px) {
-    #modalHistorial .stats-dashboard {
-        grid-template-columns: repeat(2, 1fr); /* 2x2 en celulares */
-    }
-}
-
-/* =========================================
-   12. OPTIMIZACIÓN PARA TABLET (MODAL FLEX)
-   ========================================= */
-
-/* 1. Limitamos la altura del modal para que no se salga de la pantalla */
-#modalHistorial .admin-premium {
-    max-height: 85vh; /* 85% de la altura de la tablet */
-    display: flex;
-    flex-direction: column; /* Apila: Cabecera -> Cuerpo -> Footer */
-    margin: 5vh auto;      /* Centrado vertical */
-}
-
-/* 2. Hacemos que la cabecera no se encoja */
-#modalHistorial .modal-header-pro {
-    flex-shrink: 0;
-}
-
-/* 3. El cuerpo es el único que puede crecer y tener scroll */
+#modalHistorial .modal-header-pro { flex-shrink: 0; }
 #modalHistorial .modal-body-pro {
-    flex: 1;               /* Toma todo el espacio disponible */
-    overflow-y: auto;      /* Habilita el scroll interno */
-    padding: 20px;
-    background-color: #fafbfc;
+    flex: 1; overflow-y: auto; padding: 18px; background: #fafbfc;
 }
 
-/* 4. El footer (donde está el botón Excel) se queda fijo abajo */
-/* NOTA: Asegúrate de envolver tus botones en un div con estas propiedades en el HTML */
+/* Bimestre box dentro del modal */
+.bimestre-reporte-box {
+    background: white;
+    border: 2px dashed rgba(79,133,199,0.3);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+.bimestre-reporte-label {
+    font-size: 0.7rem; font-weight: 700; color: #475569;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    display: block; margin-bottom: 8px;
+}
+.bimestre-reporte-row { display: flex; gap: 8px; }
+.select-bimestre-modal {
+    flex: 1; padding: 9px 12px; border-radius: 9px;
+    border: 1.5px solid var(--border);
+    font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.83rem;
+    color: var(--text); outline: none; transition: 0.2s; background: #f8fafc;
+}
+.select-bimestre-modal:focus { border-color: var(--secondary); background: white; }
+
+.btn-generar-ficha {
+    background: var(--secondary); color: white; border: none;
+    padding: 0 16px; border-radius: 9px; cursor: pointer;
+    font-size: 1rem; transition: 0.25s; height: 40px;
+    display: flex; align-items: center;
+}
+.btn-generar-ficha:hover { background: var(--secondary-dark); transform: scale(1.05); }
+
+/* Stats dentro del historial */
+.stats-historial {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px; background: #f8fafc;
+    padding: 12px; border-radius: 14px; margin-bottom: 14px;
+}
+
+/* Lista historial */
+.historial-detalle-list {
+    max-height: 150px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 10px;
+}
+
+.historial-info { display: flex; flex-direction: column; }
+.historial-fecha { font-weight: 700; color: var(--text); font-size: 0.88rem; }
+.historial-obs   { font-size: 0.72rem; color: #718096; font-style: italic; margin-top: 1px; }
+
+#lista-historial-detalle::-webkit-scrollbar { width: 5px; }
+#lista-historial-detalle::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+.historial-detalle-list::-webkit-scrollbar { width: 5px; }
+.historial-detalle-list::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+
+#h-nombre-estudiante { font-size: 1.05rem; font-weight: 800; color: #1a202c; }
+#h-total-dias { font-size: 0.75rem; background: #edf2f7; padding: 3px 10px; border-radius: 20px; color: var(--secondary); font-weight: 700; }
+
+.no-data-msg { text-align: center; padding: 35px 20px; color: #a0aec0; }
+.no-data-msg i { font-size: 2.2rem; display: block; margin-bottom: 10px; opacity: 0.45; }
+
+/* Footer modal */
 .modal-footer-tablet {
     flex-shrink: 0;
-    padding: 15px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    background: white;
-    border-top: 1px solid #f1f5f9;
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.02); /* Sombra sutil hacia arriba */
+    padding: 14px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -3px 10px rgba(0,0,0,0.03);
 }
 
-/* 5. Estilo específico para el botón de Excel dentro del modal */
-.btn-excel-premium {
-    background: #27ae60 !important;
-    color: white !important;
-    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2) !important;
-}
+.btn-excel-premium { background: #1a7a3f !important; color: white !important; box-shadow: 0 4px 12px rgba(26,122,63,0.25) !important; }
+.btn-excel-premium:hover { background: #145f30 !important; }
 
-/* Ajustes para pantallas táctiles (Tablets) */
 @media (max-height: 700px) {
-    #modalHistorial .admin-premium {
-        margin: 2vh auto;
-        max-height: 95vh;
-    }
-    #modalHistorial .stats-dashboard {
-        margin-bottom: 10px;
-        padding: 10px;
-    }
+    #modalHistorial .admin-premium { margin: 2vh auto; max-height: 95vh; }
+    .stats-historial { padding: 8px; margin-bottom: 10px; }
 }
 
 /* =========================================
-   13. ESTILOS PARA LIBRETAS Y BIMESTRES
+   9. TOAST
    ========================================= */
-
-/* Contenedor de opciones de exportación en el modal */
-.export-options-box {
-    background: #ffffff;
-    border: 2px dashed #e2e8f0;
-    border-radius: 20px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.export-options-box h3 {
-    font-size: 0.85rem;
-    color: var(--secondary);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Fila de control para elegir bimestre y exportar */
-.bimestre-control-row {
-    display: flex;
-    gap: 10px;
-}
-
-.select-bimestre-premium {
-    flex: 1;
-    padding: 12px;
-    border-radius: 12px;
-    border: 2px solid #edf2f7;
-    background-color: #f8fafc;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: var(--text);
-    outline: none;
-    transition: 0.3s;
-}
-
-.select-bimestre-premium:focus {
-    border-color: var(--secondary);
-    background-color: white;
-}
-
-/* Botón de Excel para Ficha Individual */
-.btn-export-individual {
-    background: #107c41; /* Verde Excel oficial */
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-.btn-export-individual:hover {
-    background: #0b592e;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(16, 124, 65, 0.3);
-}
-
-/* Ajuste para el contador de registros en el historial */
-#h-total-dias {
-    font-size: 0.8rem;
-    background: #edf2f7;
-    padding: 4px 12px;
-    border-radius: 20px;
-    color: var(--secondary);
-    font-weight: 700;
+.toast-feedback {
+    position: fixed; bottom: 28px; right: 28px;
+    padding: 13px 20px; border-radius: 13px;
+    font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.88rem;
+    color: white; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    display: flex; align-items: center; gap: 9px;
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999; pointer-events: none;
 }
 
 /* =========================================
-   14. REFINAMIENTO VISUAL DEL MODAL
+   10. SCROLLBARS Y UTILIDADES
    ========================================= */
+.styled-list::-webkit-scrollbar { width: 5px; }
+.styled-list::-webkit-scrollbar-track { background: #f1f1f1; }
+.styled-list::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
 
-#h-nombre-estudiante {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #1a202c;
-    margin-bottom: 5px;
-    display: block;
+.fa-spin { animation: spin-loader 1s linear infinite; }
+@keyframes spin-loader { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* =========================================
+   11. RESPONSIVIDAD
+   ========================================= */
+@media (max-width: 1024px) {
+    .action-row { grid-template-columns: repeat(3, 1fr); }
+    .export-row { grid-template-columns: 1fr 1fr; }
+    .bimestre-export-group { grid-column: 1 / -1; }
 }
 
-#h-grado-label {
-    font-size: 0.75rem;
-    color: var(--secondary);
-    font-weight: 700;
-    letter-spacing: 1px;
+@media (max-width: 680px) {
+    .app-container { padding: 10px; gap: 10px; }
+    .stats-dashboard { grid-template-columns: repeat(3, 1fr); }
+    .filter-row { grid-template-columns: 1fr 1fr; }
+    .action-row { grid-template-columns: repeat(2, 1fr); }
+    .export-row { grid-template-columns: 1fr 1fr; }
+    .bimestre-export-group { grid-column: 1 / -1; }
+    .btn-label { width: 35px; height: 35px; font-size: 0.82rem; }
+    .obs-input { max-width: 130px; }
 }
 
-/* Espaciado para los items del historial */
-#lista-historial-detalle {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+@media (max-width: 420px) {
+    .stats-dashboard { grid-template-columns: repeat(3, 1fr); }
+    .action-row { grid-template-columns: repeat(2, 1fr); }
+    .filter-row { grid-template-columns: 1fr; }
 }
 
-/* Estilo para cuando no hay datos */
-.no-data-msg {
-    text-align: center;
-    padding: 40px 20px;
-    color: #a0aec0;
-}
-
-.no-data-msg i {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 10px;
-    opacity: 0.5;
+@media (hover: none) {
+    .btn:active { transform: scale(0.93); filter: brightness(0.85); }
 }
