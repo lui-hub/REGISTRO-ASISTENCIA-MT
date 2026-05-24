@@ -1,4 +1,31 @@
 /* =========================================
+   0. SISTEMA DE TOAST (FEEDBACK VISUAL)
+   ========================================= */
+function mostrarToast(mensaje, tipo = 'exito') {
+    const toast = document.getElementById('toast-feedback');
+    if (!toast) return;
+
+    const colores = {
+        exito:   { bg: '#2ecc71', icon: '✅' },
+        error:   { bg: '#e74c3c', icon: '❌' },
+        info:    { bg: '#4F85C7', icon: 'ℹ️' },
+        alerta:  { bg: '#f39c12', icon: '⚠️' },
+    };
+    const { bg, icon } = colores[tipo] || colores.exito;
+
+    toast.style.background = bg;
+    toast.innerHTML = `<span>${icon}</span><span>${mensaje}</span>`;
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+        toast.style.transform = 'translateY(80px)';
+        toast.style.opacity = '0';
+    }, 3000);
+}
+
+/* =========================================
    1. CONFIGURACIÓN DE FIREBASE E INICIALIZACIÓN
    ========================================= */
 const firebaseConfig = {
@@ -88,7 +115,7 @@ function guardarTutor() {
 
     const key = `${n}_${g}`.replace(/ /g, "_");
     db.ref('tutores/' + key).set(nombre).then(() => {
-        alert("✅ Tutor guardado: " + nombre);
+        mostrarToast("Tutor guardado: " + nombre, "exito");
         cargarTablaAsistencia(); // Para que se actualice la cabecera inmediatamente
     });
 }
@@ -212,12 +239,12 @@ function guardarAsistencia() {
 
     db.ref(`asistencias/${key}/${f}`).set(registros)
         .then(() => {
-            alert("🚀 ¡Sincronizado con éxito!");
+            mostrarToast("¡Asistencia guardada con éxito!", "exito");
             cargarTablaAsistencia(); 
         })
         .catch((error) => {
             console.error("Error de Firebase:", error);
-            alert("❌ Error al guardar en la nube.");
+            mostrarToast("Error al guardar. Revisa tu conexión.", "error");
         })
         .finally(() => { 
             btnSave.innerHTML = originalText; 
@@ -229,7 +256,6 @@ function guardarAsistencia() {
    4. EXPORTACIÓN A EXCEL (XLSX)
    ========================================= */
    async function generarFichaLibreta() {
-    const nombreE = document.getElementById('h-nombre-estudiante').innerText.trim().toUpperCase().replace('NOMBRE DEL ALUMNO', '').replace(' ','');
     const nroBim = document.getElementById('selectBimestreIndividual').value;
     const config = CALENDARIZACION_2026[nroBim];
     
@@ -298,60 +324,58 @@ function guardarAsistencia() {
     const snapshot = await db.ref(`asistencias/${key}`).once('value');
     const asistenciasTotales = snapshot.val() || {};
 
-    // 1. Filtrar las fechas que existen en la DB y que están en el rango del bimestre
+    // 1. Filtrar las fechas del bimestre que existen en la DB
     const fechasBimestre = Object.keys(asistenciasTotales)
         .filter(f => f >= config.inicio && f <= config.fin)
         .sort();
 
     if (fechasBimestre.length === 0) return alert(`❌ No hay asistencias guardadas para el ${config.nombre}.`);
 
-    // 2. Encabezado del reporte
-    const filaFechas = ["N°", "APELLIDOS Y NOMBRES", ...fechasBimestre.map(f => f.split('-').reverse().slice(0,2).join('/')), "P", "T", "A", "J", "% ASIST."];
-    
+    // 2. Encabezado institucional
     const encabezadoHoja = [
         ["I.E.P. MIS TALENTOS - REPORTE DE ASISTENCIA POR BIMESTRE"],
-        [`PERIODO: ${config.nombre} (${config.unidades})`, `NIVEL: ${n}`, `GRADO: ${g}`],
+        [`PERIODO: ${config.nombre} (${config.unidades})`, "", `NIVEL: ${n}`, `GRADO: ${g}`],
         [`TUTOR(A): ${tutorActual}`, "", "", `GENERADO: ${new Date().toLocaleDateString()}`],
         [""]
     ];
 
-    // 3. Procesamiento individual por cada niño
+    // 3. Fila de cabecera de la tabla (solo nombre y resumen)
+    const filaCabecera = ["N°", "APELLIDOS Y NOMBRES", "PRESENTE", "TARDANZA", "AUSENTE", "JUSTIFICADO"];
+
+    // 4. Procesamiento: contar estados por alumno sin incluir columnas de fechas
     const alumnos = (alumnosData[key] || []).sort();
     const cuerpoReporte = alumnos.map((nom, idx) => {
         let stats = { P: 0, T: 0, A: 0, J: 0 };
         const nombreU = nom.trim().toUpperCase();
 
-        const marcasDelBimestre = fechasBimestre.map(fecha => {
+        fechasBimestre.forEach(fecha => {
             const dataDia = asistenciasTotales[fecha];
             const registro = dataDia ? dataDia.find(x => x.alumno.trim().toUpperCase() === nombreU) : null;
-            
             if (registro && registro.estado !== "S/R") {
                 const est = registro.estado.toUpperCase();
                 if (stats[est] !== undefined) stats[est]++;
-                return est;
             }
-            return "-"; // Día no registrado o sin clase
         });
 
-        const totalLectivos = stats.P + stats.T + stats.A + stats.J;
-        const porcentaje = totalLectivos > 0 ? (((stats.P + stats.T) / totalLectivos) * 100).toFixed(0) + "%" : "0%";
-
-        return [idx + 1, nombreU, ...marcasDelBimestre, stats.P, stats.T, stats.A, stats.J, porcentaje];
+        return [idx + 1, nombreU, stats.P, stats.T, stats.A, stats.J];
     });
 
-    // 4. Construcción del Excel
-    const ws = XLSX.utils.aoa_to_sheet([...encabezadoHoja, filaFechas, ...cuerpoReporte]);
+    // 5. Construcción del Excel
+    const ws = XLSX.utils.aoa_to_sheet([...encabezadoHoja, filaCabecera, ...cuerpoReporte]);
     const wb = XLSX.utils.book_new();
 
-    // Estilo de columnas: N° (5), Nombres (40), Fechas (4 c/u), Totales (5 c/u)
+    // Anchos de columna: N°, Nombres, y 4 columnas de resumen
     ws['!cols'] = [
-        { wch: 5 }, { wch: 40 }, 
-        ...fechasBimestre.map(() => ({ wch: 4 })), 
-        { wch: 5 }, { wch: 5 }, { wch: 5 }, { wch: 5 }, { wch: 10 }
+        { wch: 5 },
+        { wch: 40 },
+        { wch: 12 },
+        { wch: 12 },
+        { wch: 12 },
+        { wch: 14 }
     ];
 
-    XLSX.utils.book_append_sheet(wb, ws, "Libreta Asistencia");
-    XLSX.writeFile(wb, `Reporte_${config.nombre.replace(" ","_")}_${g.replace(/ /g, "_")}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "Resumen Bimestral");
+    XLSX.writeFile(wb, `Reporte_${config.nombre.replace(/ /g, "_")}_${g.replace(/ /g, "_")}.xlsx`);
 }
 
 function exportarExcelDiario() {
@@ -488,9 +512,9 @@ function agregarAlumno() {
     if(alumnosData[key].includes(nom)) return alert("El alumno ya existe");
     
     alumnosData[key].push(nom);
-    db.ref('alumnos/' + key).set(alumnosData[key].sort()); 
-    input.value = "";
-    actualizarListaAdmin();
+    db.ref('alumnos/' + key).set(alumnosData[key].sort())
+        .then(() => { mostrarToast("Estudiante agregado: " + nom, "exito"); input.value = ""; actualizarListaAdmin(); })
+        .catch(() => mostrarToast("Error al agregar. Intenta de nuevo.", "error"));
 }
 
 // --- FUNCIÓN DE EDITAR AÑADIDA ---
@@ -513,10 +537,10 @@ function editarAlumno(i) {
         
         db.ref('alumnos/' + key).set(listaOriginal.sort())
             .then(() => {
-                alert("✅ Nombre actualizado");
+                mostrarToast("Nombre actualizado correctamente", "exito");
                 actualizarListaAdmin();
             })
-            .catch(error => alert("❌ Error al editar"));
+            .catch(() => mostrarToast("Error al editar. Intenta de nuevo.", "error"));
     }
 }
 
@@ -527,8 +551,9 @@ function eliminarAlumno(i) {
     const key = `${n}_${g}`.replace(/ /g, "_");
     const listaOriginal = [...alumnosData[key]].sort();
     listaOriginal.splice(i, 1);
-    db.ref('alumnos/' + key).set(listaOriginal);
-    actualizarListaAdmin();
+    db.ref('alumnos/' + key).set(listaOriginal)
+        .then(() => { mostrarToast("Estudiante eliminado", "info"); actualizarListaAdmin(); })
+        .catch(() => mostrarToast("Error al eliminar. Intenta de nuevo.", "error"));
 }
 
 function actualizarListaAdmin() {
