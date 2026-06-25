@@ -5,266 +5,299 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>I.E.P. Mis Talentos - Sistema 2026</title>
     <link rel="shortcut icon" href="LOGO_COLEGIO.png" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Meta tags para mejor SEO y compartir -->
+    <meta name="description" content="Sistema de registro de asistencia I.E.P. Mis Talentos - Año 2026">
+    <meta name="author" content="I.E.P. Mis Talentos">
+    <meta property="og:title" content="I.E.P. Mis Talentos - Sistema 2026">
+    <meta property="og:description" content="Sistema de registro de asistencia">
+    <meta property="og:image" content="LOGO_COLEGIO.png">
 </head>
 <body>
-<div class="app-container">
-
-    <!-- DASHBOARD STATS -->
-    <div class="stats-dashboard">
-        <div class="stat-card">
-            <i class="fas fa-users stat-icon"></i>
-            <span class="stat-val" id="count-total">0</span>
-            <span class="stat-label">Alumnos</span>
-        </div>
-        <div class="stat-card p">
-            <i class="fas fa-check-circle stat-icon"></i>
-            <span class="stat-val" id="count-p">0</span>
-            <span class="stat-label">Presentes</span>
-        </div>
-        <div class="stat-card t">
-            <i class="fas fa-clock stat-icon"></i>
-            <span class="stat-val" id="count-t">0</span>
-            <span class="stat-label">Tardanzas</span>
-        </div>
-        <div class="stat-card a">
-            <i class="fas fa-times-circle stat-icon"></i>
-            <span class="stat-val" id="count-a">0</span>
-            <span class="stat-label">Ausentes</span>
-        </div>
-        <div class="stat-card j">
-            <i class="fas fa-file-alt stat-icon"></i>
-            <span class="stat-val" id="count-j">0</span>
-            <span class="stat-label">Justific.</span>
-        </div>
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
     </div>
 
-    <!-- CABECERA -->
-    <header class="main-header">
-        <div class="header-brand">
-            <img src="INSIGNIA.jpg" alt="Logo" class="logo-img">
-            <div class="brand-text">
-                <h1>Mis Talentos</h1>
-                <span>Registro Oficial 2026</span>
-            </div>
-        </div>
-        <div id="reloj"><i class="far fa-clock"></i> 00:00:00</div>
-    </header>
+    <div class="app-container">
 
-    <!-- PANEL DE CONTROL -->
-    <section class="control-panel">
-
-        <!-- ZONA 1: FILTROS -->
-        <div class="panel-section-label"><i class="fas fa-filter"></i> Selección</div>
-        <div class="filter-row">
-            <div class="input-group">
-                <i class="fas fa-layer-group input-icon"></i>
-                <select id="selectNivel" onchange="actualizarGrados()">
-                    <option value="">Nivel</option>
-                    <option value="INICIAL">INICIAL</option>
-                    <option value="PRIMARIA">PRIMARIA</option>
-                    <option value="SECUNDARIA">SECUNDARIA</option>
-                </select>
+        <!-- DASHBOARD STATS -->
+        <div class="stats-dashboard">
+            <div class="stat-card" id="stat-total">
+                <i class="fas fa-users stat-icon"></i>
+                <span class="stat-val" id="count-total">0</span>
+                <span class="stat-label">Alumnos</span>
             </div>
-            <div class="input-group">
-                <i class="fas fa-graduation-cap input-icon"></i>
-                <select id="selectGrado" onchange="cargarTablaAsistencia()">
-                    <option value="">Grado</option>
-                </select>
+            <div class="stat-card p" id="stat-presentes">
+                <i class="fas fa-check-circle stat-icon"></i>
+                <span class="stat-val" id="count-p">0</span>
+                <span class="stat-label">Presentes</span>
             </div>
-            <div class="input-group">
-                <i class="fas fa-calendar-day input-icon"></i>
-                <input type="date" id="fechaAsistencia" onchange="cargarTablaAsistencia()">
+            <div class="stat-card t" id="stat-tardanzas">
+                <i class="fas fa-clock stat-icon"></i>
+                <span class="stat-val" id="count-t">0</span>
+                <span class="stat-label">Tardanzas</span>
+            </div>
+            <div class="stat-card a" id="stat-ausentes">
+                <i class="fas fa-times-circle stat-icon"></i>
+                <span class="stat-val" id="count-a">0</span>
+                <span class="stat-label">Ausentes</span>
+            </div>
+            <div class="stat-card j" id="stat-justificados">
+                <i class="fas fa-file-alt stat-icon"></i>
+                <span class="stat-val" id="count-j">0</span>
+                <span class="stat-label">Justific.</span>
             </div>
         </div>
 
-        <div class="panel-divider"></div>
-
-        <!-- ZONA 2: ACCIONES PRINCIPALES -->
-        <div class="panel-section-label"><i class="fas fa-bolt"></i> Acciones</div>
-        <div class="action-row">
-            <button onclick="guardarAsistencia()" class="btn btn-save">
-                <i class="fas fa-save"></i><span>Guardar</span>
-            </button>
-            <button onclick="marcarTodosPresentes()" class="btn btn-fast">
-                <i class="fas fa-check-double"></i><span>Todo P</span>
-            </button>
-            <button onclick="abrirModalAlumnos()" class="btn btn-config">
-                <i class="fas fa-users-cog"></i><span>Alumnos</span>
-            </button>
-        </div>
-
-        <div class="panel-divider"></div>
-
-        <!-- ZONA 3: EXPORTACIONES -->
-        <div class="panel-section-label"><i class="fas fa-file-export"></i> Exportar</div>
-        <div class="export-row">
-            <button onclick="exportarExcelDiario()" class="btn btn-export">
-                <i class="fas fa-file-excel"></i><span>Diario</span>
-            </button>
-            <button onclick="exportarReporteMensual()" class="btn btn-monthly">
-                <i class="fas fa-calendar-alt"></i><span>Mensual</span>
-            </button>
-            <div class="bimestre-export-group">
-                <select id="selectBimestreExport" class="select-bimestre">
-                    <option value="1">I BIM</option>
-                    <option value="2">II BIM</option>
-                    <option value="3">III BIM</option>
-                    <option value="4">IV BIM</option>
-                </select>
-                <button onclick="exportarReporteBimestral(document.getElementById('selectBimestreExport').value)" class="btn btn-bimestral">
-                    <i class="fas fa-file-download"></i><span>Bimestral</span>
-                </button>
-            </div>
-        </div>
-
-    </section>
-
-    <!-- INFO TUTOR -->
-    <div class="info-resumen-grado">
-        <span id="infoTutorCabecera"><i class="fas fa-chalkboard-teacher"></i> Tutor no asignado</span>
-        <span class="badge-estudiantes">Estudiantes: <b id="txt-conteo-alumnos">0</b></span>
-    </div>
-
-    <!-- TABLA PRINCIPAL -->
-    <main class="content-card">
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="40">Nº</th>
-                        <th>Estudiante</th>
-                        <th>Asistencia y Notas</th>
-                    </tr>
-                </thead>
-                <tbody id="listaEstudiantes">
-                    <tr class="empty-state-row">
-                        <td colspan="3">
-                            <div class="empty-state">
-                                <i class="fas fa-hand-point-up"></i>
-                                <p>Selecciona un nivel y grado para comenzar</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </main>
-</div>
-
-<!-- MODAL GESTIÓN ALUMNOS -->
-<div id="modalEstudiantes" class="modal">
-    <div class="admin-premium">
-        <div class="modal-header-pro">
-            <div class="header-main-info">
-                <i class="fas fa-users-cog modal-header-icon"></i>
-                <div>
-                    <h2>Panel de Gestión</h2>
-                    <span id="infoGradoActual">Seleccione grado</span>
+        <!-- CABECERA -->
+        <header class="main-header">
+            <div class="header-brand">
+                <img src="INSIGNIA.jpg" alt="Logo I.E.P. Mis Talentos" class="logo-img" loading="lazy">
+                <div class="brand-text">
+                    <h1>Mis Talentos</h1>
+                    <span>Registro Oficial 2026</span>
                 </div>
             </div>
-            <button class="btn-close-x" onclick="cerrarModalAlumnos()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body-pro">
-            <div class="tutor-box-ui">
-                <label><i class="fas fa-user-tie"></i> Profesor Tutor:</label>
-                <div class="input-action-group">
-                    <input type="text" id="nombreTutor" placeholder="Nombre del docente...">
-                    <button onclick="guardarTutor()" class="btn-action-save"><i class="fas fa-save"></i></button>
-                </div>
-            </div>
-            <div class="admin-quick-actions">
-                <button class="btn-import-ui" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-file-import"></i> Carga Masiva
-                </button>
-                <button class="btn-import-ui btn-import-secondary" onclick="exportarSoloNombres()">
-                    <i class="fas fa-file-download"></i> Exportar Lista
-                </button>
-                <input type="file" id="fileInput" style="display:none" accept=".txt" onchange="importarLista(this)">
-            </div>
-            <div class="add-student-ui">
-                <label><i class="fas fa-user-plus"></i> Nuevo Estudiante:</label>
-                <div class="input-action-group">
-                    <input type="text" id="nombreAlumno" placeholder="Apellidos y Nombres...">
-                    <button onclick="agregarAlumno()" class="btn-action-add"><i class="fas fa-plus"></i></button>
-                </div>
-            </div>
-            <div class="list-container-ui">
-                <div class="list-header-ui">
-                    <span>Alumnos Registrados</span>
-                    <span class="badge-count" id="count-admin-list">0</span>
-                </div>
-                <ul id="listaAdminAlumnos" class="styled-list"></ul>
-            </div>
-        </div>
-        <button onclick="cerrarModalAlumnos()" class="btn-finish-ui">Finalizar Configuración</button>
-    </div>
-</div>
+            <div id="reloj"><i class="far fa-clock"></i> 00:00:00</div>
+        </header>
 
-<!-- MODAL HISTORIAL -->
-<div id="modalHistorial" class="modal">
-    <div class="admin-premium modal-historial">
-        <div class="modal-header-pro modal-header-historial">
-            <div class="header-main-info">
-                <div>
-                    <span id="h-grado-label" class="historial-grado-label">FICHA PARA LIBRETA</span>
-                    <h2 id="h-nombre-estudiante">
-                        <i class="fas fa-user-graduate"></i> Nombre del Alumno
-                    </h2>
-                </div>
-            </div>
-            <button onclick="cerrarModalHistorial()" class="btn-close-x">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal-body-pro">
-            <div class="bimestre-reporte-box">
-                <label class="bimestre-reporte-label">GENERAR REPORTE BIMESTRAL:</label>
-                <div class="bimestre-reporte-row">
-                    <select id="selectBimestreIndividual" class="select-bimestre-modal">
-                        <option value="1">I BIMESTRE</option>
-                        <option value="2">II BIMESTRE</option>
-                        <option value="3">III BIMESTRE</option>
-                        <option value="4">IV BIMESTRE</option>
+        <!-- PANEL DE CONTROL -->
+        <section class="control-panel" aria-label="Panel de control">
+
+            <!-- ZONA 1: FILTROS -->
+            <div class="panel-section-label"><i class="fas fa-filter"></i> Selección</div>
+            <div class="filter-row">
+                <div class="input-group">
+                    <i class="fas fa-layer-group input-icon" aria-hidden="true"></i>
+                    <select id="selectNivel" onchange="actualizarGrados()" aria-label="Seleccionar nivel">
+                        <option value="">Nivel</option>
+                        <option value="INICIAL">INICIAL</option>
+                        <option value="PRIMARIA">PRIMARIA</option>
+                        <option value="SECUNDARIA">SECUNDARIA</option>
                     </select>
-                    <button onclick="generarFichaLibreta()" class="btn-generar-ficha">
-                        <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap input-icon" aria-hidden="true"></i>
+                    <select id="selectGrado" onchange="cargarTablaAsistencia()" aria-label="Seleccionar grado">
+                        <option value="">Grado</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-calendar-day input-icon" aria-hidden="true"></i>
+                    <input type="date" id="fechaAsistencia" onchange="cargarTablaAsistencia()" aria-label="Fecha de asistencia">
+                </div>
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <!-- ZONA 2: ACCIONES PRINCIPALES -->
+            <div class="panel-section-label"><i class="fas fa-bolt"></i> Acciones</div>
+            <div class="action-row">
+                <button onclick="guardarAsistencia()" class="btn btn-save" aria-label="Guardar asistencia">
+                    <i class="fas fa-save" aria-hidden="true"></i><span>Guardar</span>
+                </button>
+                <button onclick="marcarTodosPresentes()" class="btn btn-fast" aria-label="Marcar todos como presentes">
+                    <i class="fas fa-check-double" aria-hidden="true"></i><span>Todo P</span>
+                </button>
+                <button onclick="abrirModalAlumnos()" class="btn btn-config" aria-label="Gestionar alumnos">
+                    <i class="fas fa-users-cog" aria-hidden="true"></i><span>Alumnos</span>
+                </button>
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <!-- ZONA 3: EXPORTACIONES -->
+            <div class="panel-section-label"><i class="fas fa-file-export"></i> Exportar</div>
+            <div class="export-row">
+                <button onclick="exportarExcelDiario()" class="btn btn-export" aria-label="Exportar reporte diario">
+                    <i class="fas fa-file-excel" aria-hidden="true"></i><span>Diario</span>
+                </button>
+                <button onclick="exportarReporteMensual()" class="btn btn-monthly" aria-label="Exportar reporte mensual">
+                    <i class="fas fa-calendar-alt" aria-hidden="true"></i><span>Mensual</span>
+                </button>
+                <div class="bimestre-export-group">
+                    <select id="selectBimestreExport" class="select-bimestre" aria-label="Seleccionar bimestre">
+                        <option value="1">I BIM</option>
+                        <option value="2">II BIM</option>
+                        <option value="3">III BIM</option>
+                        <option value="4">IV BIM</option>
+                    </select>
+                    <button onclick="exportarReporteBimestral(document.getElementById('selectBimestreExport').value)" 
+                            class="btn btn-bimestral" 
+                            aria-label="Exportar reporte bimestral">
+                        <i class="fas fa-file-download" aria-hidden="true"></i><span>Bimestral</span>
                     </button>
                 </div>
             </div>
-            <div class="stats-dashboard stats-historial">
-                <div class="stat-card p"><span class="stat-val" id="h-count-p">0</span><span class="stat-label">P</span></div>
-                <div class="stat-card t"><span class="stat-val" id="h-count-t">0</span><span class="stat-label">T</span></div>
-                <div class="stat-card a"><span class="stat-val" id="h-count-a">0</span><span class="stat-label">A</span></div>
-                <div class="stat-card j"><span class="stat-val" id="h-count-j">0</span><span class="stat-label">J</span></div>
-            </div>
-            <div class="list-container-ui">
-                <div class="list-header-ui">
-                    <span>DETALLE RECIENTE</span>
-                    <span class="badge-count" id="h-total-dias">0 días</span>
-                </div>
-                <div id="lista-historial-detalle" class="historial-detalle-list"></div>
-            </div>
+
+        </section>
+
+        <!-- INFO TUTOR -->
+        <div class="info-resumen-grado">
+            <span id="infoTutorCabecera"><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Tutor no asignado</span>
+            <span class="badge-estudiantes">Estudiantes: <b id="txt-conteo-alumnos">0</b></span>
         </div>
-        <div class="modal-footer-tablet">
-            <button onclick="exportarHistorialAlumno()" class="btn btn-excel-premium">
-                <i class="fas fa-file-excel"></i> ANUAL
-            </button>
-            <button onclick="cerrarModalHistorial()" class="btn btn-monthly">
-                CERRAR
-            </button>
+
+        <!-- TABLA PRINCIPAL -->
+        <main class="content-card" role="table" aria-label="Tabla de asistencia">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col" width="40">Nº</th>
+                            <th scope="col">Estudiante</th>
+                            <th scope="col">Asistencia y Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaEstudiantes">
+                        <tr class="empty-state-row">
+                            <td colspan="3">
+                                <div class="empty-state">
+                                    <i class="fas fa-hand-point-up" aria-hidden="true"></i>
+                                    <p>Selecciona un nivel y grado para comenzar</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL GESTIÓN ALUMNOS -->
+    <div id="modalEstudiantes" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalAlumnosTitle">
+        <div class="admin-premium">
+            <div class="modal-header-pro">
+                <div class="header-main-info">
+                    <i class="fas fa-users-cog modal-header-icon" aria-hidden="true"></i>
+                    <div>
+                        <h2 id="modalAlumnosTitle">Panel de Gestión</h2>
+                        <span id="infoGradoActual">Seleccione grado</span>
+                    </div>
+                </div>
+                <button class="btn-close-x" onclick="cerrarModalAlumnos()" aria-label="Cerrar modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body-pro">
+                <div class="tutor-box-ui">
+                    <label for="nombreTutor"><i class="fas fa-user-tie" aria-hidden="true"></i> Profesor Tutor:</label>
+                    <div class="input-action-group">
+                        <input type="text" id="nombreTutor" placeholder="Nombre del docente..." aria-label="Nombre del tutor">
+                        <button onclick="guardarTutor()" class="btn-action-save" aria-label="Guardar tutor">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="admin-quick-actions">
+                    <button class="btn-import-ui" onclick="document.getElementById('fileInput').click()" aria-label="Importar lista de alumnos">
+                        <i class="fas fa-file-import" aria-hidden="true"></i> Carga Masiva
+                    </button>
+                    <button class="btn-import-ui btn-import-secondary" onclick="exportarSoloNombres()" aria-label="Exportar lista de alumnos">
+                        <i class="fas fa-file-download" aria-hidden="true"></i> Exportar Lista
+                    </button>
+                    <input type="file" id="fileInput" style="display:none" accept=".txt" onchange="importarLista(this)" aria-label="Archivo de lista">
+                </div>
+                <div class="add-student-ui">
+                    <label for="nombreAlumno"><i class="fas fa-user-plus" aria-hidden="true"></i> Nuevo Estudiante:</label>
+                    <div class="input-action-group">
+                        <input type="text" id="nombreAlumno" placeholder="Apellidos y Nombres..." aria-label="Nombre del nuevo estudiante">
+                        <button onclick="agregarAlumno()" class="btn-action-add" aria-label="Agregar estudiante">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="list-container-ui">
+                    <div class="list-header-ui">
+                        <span>Alumnos Registrados</span>
+                        <span class="badge-count" id="count-admin-list">0</span>
+                    </div>
+                    <ul id="listaAdminAlumnos" class="styled-list" role="list"></ul>
+                </div>
+            </div>
+            <button onclick="cerrarModalAlumnos()" class="btn-finish-ui">Finalizar Configuración</button>
         </div>
     </div>
-</div>
 
-<!-- TOAST -->
-<div id="toast-feedback" class="toast-feedback"></div>
+    <!-- MODAL HISTORIAL -->
+    <div id="modalHistorial" class="modal" role="dialog" aria-modal="true" aria-labelledby="historialTitle">
+        <div class="admin-premium modal-historial">
+            <div class="modal-header-pro modal-header-historial">
+                <div class="header-main-info">
+                    <div>
+                        <span id="h-grado-label" class="historial-grado-label">FICHA PARA LIBRETA</span>
+                        <h2 id="h-nombre-estudiante" id="historialTitle">
+                            <i class="fas fa-user-graduate" aria-hidden="true"></i> Nombre del Alumno
+                        </h2>
+                    </div>
+                </div>
+                <button onclick="cerrarModalHistorial()" class="btn-close-x" aria-label="Cerrar historial">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body-pro">
+                <div class="bimestre-reporte-box">
+                    <label class="bimestre-reporte-label" for="selectBimestreIndividual">GENERAR REPORTE BIMESTRAL:</label>
+                    <div class="bimestre-reporte-row">
+                        <select id="selectBimestreIndividual" class="select-bimestre-modal" aria-label="Seleccionar bimestre para reporte">
+                            <option value="1">I BIMESTRE</option>
+                            <option value="2">II BIMESTRE</option>
+                            <option value="3">III BIMESTRE</option>
+                            <option value="4">IV BIMESTRE</option>
+                        </select>
+                        <button onclick="generarFichaLibreta()" class="btn-generar-ficha" aria-label="Generar ficha para libreta">
+                            <i class="fas fa-file-invoice" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="stats-dashboard stats-historial">
+                    <div class="stat-card p">
+                        <span class="stat-val" id="h-count-p">0</span>
+                        <span class="stat-label">P</span>
+                    </div>
+                    <div class="stat-card t">
+                        <span class="stat-val" id="h-count-t">0</span>
+                        <span class="stat-label">T</span>
+                    </div>
+                    <div class="stat-card a">
+                        <span class="stat-val" id="h-count-a">0</span>
+                        <span class="stat-label">A</span>
+                    </div>
+                    <div class="stat-card j">
+                        <span class="stat-val" id="h-count-j">0</span>
+                        <span class="stat-label">J</span>
+                    </div>
+                </div>
+                <div class="list-container-ui">
+                    <div class="list-header-ui">
+                        <span>DETALLE RECIENTE</span>
+                        <span class="badge-count" id="h-total-dias">0 días</span>
+                    </div>
+                    <div id="lista-historial-detalle" class="historial-detalle-list" role="list"></div>
+                </div>
+            </div>
+            <div class="modal-footer-tablet">
+                <button onclick="exportarHistorialAlumno()" class="btn btn-excel-premium" aria-label="Exportar historial anual a Excel">
+                    <i class="fas fa-file-excel" aria-hidden="true"></i> ANUAL
+                </button>
+                <button onclick="cerrarModalHistorial()" class="btn btn-monthly" aria-label="Cerrar historial">
+                    CERRAR
+                </button>
+            </div>
+        </div>
+    </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="script.js"></script>
+    <!-- TOAST -->
+    <div id="toast-feedback" class="toast-feedback" role="alert" aria-live="polite"></div>
+
+    <!-- SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
